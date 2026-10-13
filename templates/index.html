@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiger Chat | Yemen Android AI</title>
+    <!-- FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ربط ملف التنسيقات الخارجي -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- مكتبة Marked لتحويل Markdown إلى HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- مكتبة Highlight.js لتظليل الأكواد البرمجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+
+<!-- الشاشة الافتتاحية -->
+<div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+        <img src="{{ url_for('static', filename='images/photo.png') }}" alt="Logo" class="splash-logo">
+        <h2>TAIGER CHAT</h2>
+        <p id="splashStatus">
+            مستشار صيانة وبرمجة هواتف Android
+        </p>
+        <!-- شريط التحميل والنسبة المئوية -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">0%</div>
+    </div>
+</div>
+
+<!-- الحاوية الرئيسية للتطبيق -->
+<!-- الحاوية الرئيسية للتطبيق -->
+<header class="app-header">
+    <!-- القائمة الجانبية لسجل المحادثات -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div style="display: flex; align-items: center; gap: 8px; color: #65ff32; font-weight: bold; font-size: 1rem;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>سجل المحادثات</span>
+            </div>
+            <button type="button" class="btn-close-sidebar" onclick="toggleSidebar(event)">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- قائمة المحادثات المخزنة مباشرة -->
+        <div id="chatHistoryList" class="chat-history-list"></div>
+    </aside>
+
+    <div class="header-left">
+        <!-- زر سجل المحادثات المربع المضيء (مثلث فقط) -->
+        <button type="button" id="sidebarToggle" class="theme-header-btn square-icon-btn" title="سجل المحادثات" onclick="toggleSidebar(event)">
+            <i class="fa-solid fa-play" style="font-size: 13px;"></i>
+        </button>
+
+        <a href="{{ url_for('login') }}" class="theme-header-btn">
+            <i class="fa-solid fa-shield-halved"></i>
+            لوحة التحكم
+        </a>
+
+        <button type="button" onclick="startNewChat(event)" class="theme-header-btn">
+            <i class="fa-solid fa-plus"></i>
+            محادثة جديدة
+        </button>
+    </div>
+
+    <div class="chat-brand" id="chatBrand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Tiger Chat Logo">
+        <div class="chat-brand-text">
+            <div class="chat-brand-title">Tiger Chat</div>
+            <div class="chat-brand-subtitle">Yemen Android AI</div>
+        </div>
+    </div>
+</header>
+
+<div id="backgroundOverlay"></div>
+
+<div id="chatBox" class="chat-box"></div>
+<!-- طبقات التلاشي والضبابية الاحترافية -->
+<div class="chat-fade-top"></div>
+<div class="chat-fade-bottom" style="height: 144px !important; background: linear-gradient(to top, rgba(7, 11, 18, 0.95) 20%, transparent 100%) !important; position: fixed !important; bottom: 0 !important; left: 0 !important; width: 100% !important; pointer-events: none !important; z-index: 400 !important;"></div><!-- تنبيه انقطاع الإنترنت -->
+<div class="network-alert" id="networkAlert" style="display: none;">
+    <span><i class="fa-solid fa-wifi"></i> انقطع الاتصال بالإنترنت!</span>
+    <i class="fa-solid fa-rotate-right"></i>
+</div>
+
+<!-- منطقة الإدخال والإرسال -->
+<form id="chatForm" class="input-area">
+    <select id="modeSelect" class="mode-select">
+        <option value="fast">إجابة سريعة</option>
+        <option value="advanced">بحث متقدم</option>
+    </select>
+
+    <input type="text" id="userInput" placeholder="اكتب استفسارك هنا..." required autocomplete="off">
+
+    <button class="btn btn-primary" type="submit" id="actionBtn">
+        <i class="fa-solid fa-paper-plane" id="btnIcon"></i> <span id="btnText">إرسال</span>
+    </button>
+</form>
+
+<footer>
+    <p>جميع الحقوق محفوظة لدى المبرمج أيمن بن فارس © 2026</p>
+    <p>للتواصل مع المطور: 778590705</p>
+</footer>
+
+<!-- نافذة الإعدادات -->
+<div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSettings()">&times;</span>
+        <h2>إعدادات التطبيق</h2>
+        <div class="setting-item">
+            <label for="apiMode">وضع المعالجة:</label>
+            <p>يمكنك التغيير بين الرد السريع والبحث المتقدم من شريط الإدخال الرئيسي.</p>
+        </div>
+        <button class="btn btn-primary" onclick="closeSettings()">حفظ وإغلاق</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const splashScreen = document.getElementById('splash-screen');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const splashStatus = document.getElementById('splashStatus');
+
+    const navEntries = performance.getEntriesByType('navigation');
+    const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
+    const hasSeenSplash = sessionStorage.getItem('splashShown');
+
+    if (hasSeenSplash && !isReload) {
+        if (splashScreen) {
+            splashScreen.style.display = 'none';
+        }
+    } else {
+        sessionStorage.setItem('splashShown', 'true');
+
+        const totalDuration = 100;
+        const intervalTime = 55;   
+        let elapsedTime = 0;
+
+        const statusMessages = [
+            "جاري تشغيل النظام وفحص البيئة...",
+            "تحميل مكتبات وأدوات أندرويد...",
+            "تهيئة قواعد البيانات والمحادثات...",
+            "جاري إعداد قواعد بيانات تايجر...",
+            "أوشكنا على الانتهاء، أهلاً بك!"
+        ];
+
+        const timer = setInterval(() => {
+            elapsedTime += intervalTime;
+            let percentage = Math.min(Math.floor((elapsedTime / totalDuration) * 100), 100);
+
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressText) progressText.innerText = percentage + '%';
+
+            if (percentage < 25) {
+                if (splashStatus) splashStatus.innerText = statusMessages[0];
+            } else if (percentage < 50) {
+                if (splashStatus) splashStatus.innerText = statusMessages[1];
+            } else if (percentage < 75) {
+                if (splashStatus) splashStatus.innerText = statusMessages[2];
+            } else if (percentage < 95) {
+                if (splashStatus) splashStatus.innerText = statusMessages[3];
+            } else {
+                if (splashStatus) splashStatus.innerText = statusMessages[4];
+            }
+
+            if (elapsedTime >= totalDuration) {
+                clearInterval(timer);
+                if (splashScreen) {
+                    splashScreen.classList.add('hidden');
+                }
+            }
+        }, intervalTime);
+    }
+
+    loadSidebarChats();
+});
+
+function getDeviceId() {
+    let deviceId = localStorage.getItem('device_id');
+    if (!deviceId) {
+        deviceId = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        localStorage.setItem('device_id', deviceId);
+    }
+    return deviceId;
+}
+
+if (!window.currentChatId) {
+    window.currentChatId = 'chat_' + Date.now();
+}
+
+let chatHistory = [];
+let attachedFiles = [];
+
+const userInput = document.getElementById('userInput');
+const chatBox = document.getElementById('chatBox');
+if (chatBox) {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+const chatForm = document.getElementById('chatForm');
+const modeSelect = document.getElementById('modeSelect');
+
+const imgInput = document.createElement('input');
+imgInput.type = 'file'; imgInput.accept = 'image/*'; imgInput.multiple = true; imgInput.style.display = 'none';
+const videoInput = document.createElement('input');
+videoInput.type = 'file'; videoInput.accept = 'video/*'; videoInput.multiple = true; videoInput.style.display = 'none';
+const fileInput = document.createElement('input');
+fileInput.type = 'file'; fileInput.accept = '.pdf,.doc,.docx,.txt,.zip,.rar,application/*'; fileInput.multiple = true; fileInput.style.display = 'none';
+document.body.append(imgInput, videoInput, fileInput);
+
+const mediaWrapper = document.createElement('div');
+mediaWrapper.className = 'media-btn-wrapper';
+mediaWrapper.innerHTML = `
+    <button type="button" class="media-btn" id="btnMedia" title="إرفاق وسائط وملفات">
+        <i class="fa-solid fa-paperclip"></i>
+    </button>
+    <div class="media-dropdown" id="mediaDropdown">
+        <button type="button" class="dropdown-item" id="optImg">
+            <i class="fa-solid fa-image" style="color: #38bdf8;"></i> صور
+        </button>
+        <button type="button" class="dropdown-item" id="optVid">
+            <i class="fa-solid fa-video" style="color: #a855f7;"></i> فيديو
+        </button>
+        <button type="button" class="dropdown-item" id="optFile">
+            <i class="fa-solid fa-file-lines" style="color: #34d399;"></i> ملفات
+        </button>
+    </div>
+`;
+
+if (chatForm && userInput) {
+    chatForm.insertBefore(mediaWrapper, userInput);
+}
+
+const previewContainer = document.createElement('div');
+previewContainer.className = 'file-preview-container';
+previewContainer.style.display = 'none';
+if (chatForm) {
+    chatForm.parentNode.insertBefore(previewContainer, chatForm);
+}
+
+const btnMedia = mediaWrapper.querySelector('#btnMedia');
+const mediaDropdown = mediaWrapper.querySelector('#mediaDropdown');
+
+btnMedia.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mediaDropdown.classList.toggle('show');
+});
+
+mediaWrapper.querySelector('#optImg').onclick = () => { mediaDropdown.classList.remove('show'); imgInput.click(); };
+mediaWrapper.querySelector('#optVid').onclick = () => { mediaDropdown.classList.remove('show'); videoInput.click(); };
+mediaWrapper.querySelector('#optFile').onclick = () => { mediaDropdown.classList.remove('show'); fileInput.click(); };
+
+[imgInput, videoInput, fileInput].forEach(inputEl => {
+    inputEl.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        for (const file of files) {
+            const base64 = await convertFileToBase64(file);
+            attachedFiles.push({
+                fileObj: file,
+                name: file.name,
+                mime_type: file.type || 'application/octet-stream',
+                data: base64.split(',')[1]
+            });
+        }
+        inputEl.value = '';
+        renderFilePreviews();
+    });
+});
+
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+function renderFilePreviews() {
+    previewContainer.innerHTML = '';
+    if (attachedFiles.length === 0) {
+        previewContainer.style.display = 'none';
+        return;
+    }
+    previewContainer.style.display = 'flex';
+
+    attachedFiles.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-preview-item';
+        
+        let icon = '📄';
+        if (item.mime_type.startsWith('image/')) icon = '🖼️';
+        else if (item.mime_type.startsWith('video/')) icon = '🎥';
+
+        div.innerHTML = `<span>${icon} ${item.name}</span>`;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-file-btn';
+        removeBtn.innerText = '✕';
+        removeBtn.onclick = () => {
+            attachedFiles.splice(index, 1);
+            renderFilePreviews();
+        };
+        div.appendChild(removeBtn);
+        previewContainer.appendChild(div);
+    });
+}
+
+function appendMessage(text, sender, files = []) {
+    if (!chatBox) return null;
+    
+    if (sender === 'user') {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'user-message-row';
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender);
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'msg-content';
+        const innerContent = document.createElement('div');
+        innerContent.style.flex = '1';
+
+        if (text) {
+            const textEl = document.createElement('div');
+            textEl.className = 'msg-text-body';
+            textEl.textContent = text;
+            innerContent.appendChild(textEl);
+        }
+
+        if (files && files.length > 0) {
+            const filesContainer = document.createElement('div');
+            filesContainer.className = 'attached-files-grid';
+
+            files.forEach(file => {
+                if (file.mime_type && file.mime_type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = `data:${file.mime_type};base64,${file.data}`;
+                    img.className = 'chat-attached-img';
+                    filesContainer.appendChild(img);
+                } else if (file.mime_type && file.mime_type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = `data:${file.mime_type};base64,${file.data}`;
+                    video.controls = true;
+                    video.className = 'chat-attached-video';
+                    filesContainer.appendChild(video);
+                } else {
+                    const docBadge = document.createElement('div');
+                    docBadge.className = 'chat-attached-doc';
+                    docBadge.innerHTML = `<i class="fa-solid fa-file-lines"></i> <span>${file.name || 'ملف مرفق'}</span>`;
+                    filesContainer.appendChild(docBadge);
+                }
+            });
+            innerContent.appendChild(filesContainer);
+        }
+
+        contentDiv.appendChild(innerContent);
+        msgDiv.appendChild(contentDiv);
+        rowDiv.appendChild(msgDiv);
+
+        // ⚡ زر الخيارات (الثلاث نقاط) خارج صندوق الرسالة وتحتها تماماً
+        const optionsWrapper = document.createElement('div');
+        optionsWrapper.className = 'msg-options-wrapper';
+        optionsWrapper.innerHTML = `
+            <button type="button" class="msg-options-btn" title="خيارات الرسالة">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="msg-dropdown"></div>
+        `;
+
+        const btnToggle = optionsWrapper.querySelector('.msg-options-btn');
+        const dropdown = optionsWrapper.querySelector('.msg-dropdown');
+
+        btnToggle.onclick = (e) => {
+            e.stopPropagation();
+
+            const allUserMsgs = chatBox.querySelectorAll('.message.user');
+            const isLast = allUserMsgs.length > 0 && allUserMsgs[allUserMsgs.length - 1] === msgDiv;
+
+            dropdown.innerHTML = '';
+
+           // زر النسخ (متاح دائماً لجميع الرسائل) مع تفعيل تأثير "تم النسخ"
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'msg-dropdown-item btn-copy-msg';
+            copyBtn.innerHTML = `<i class="fa-solid fa-copy" style="color: #34d399; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.7)); font-size: 0.95rem;"></i> نسخ`;
+            
+            copyBtn.onclick = (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(text || '');
+
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i class="fa-solid fa-check" style="color: #34d399;"></i> تم النسخ`;
+
+                setTimeout(() => {
+                    dropdown.classList.remove('show');
+                    copyBtn.innerHTML = originalHTML;
+                }, 1200);
+            };
+            dropdown.appendChild(copyBtn);
+
+            // زر التعديل (يظهر للرسالة الأخيرة فقط)
+            if (isLast) {
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'msg-dropdown-item btn-edit-msg';
+                editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #38bdf8; filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7)); font-size: 0.95rem;"></i> تعديل`;
+                
+                editBtn.onclick = () => {
+                    dropdown.classList.remove('show');
+                    optionsWrapper.style.display = 'none';
+
+                    const textBodyEl = innerContent.querySelector('.msg-text-body');
+                    if (!textBodyEl) return;
+                    const originalText = textBodyEl.textContent;
+
+                    innerContent.innerHTML = `
+                        <div class="inline-edit-box" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                            <textarea class="inline-edit-textarea" style="width: 100%; background: rgba(10, 18, 28, 0.9); border: 1px solid #38bdf8; border-radius: 8px; color: #fff; padding: 10px; resize: vertical; min-height: 70px; font-family: inherit; font-size: 0.95rem; outline: none;">${originalText}</textarea>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <button type="button" class="btn-cancel-edit" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">إلغاء</button>
+                                <button type="button" class="btn-save-edit" style="background: rgba(16, 185, 129, 0.3); border: 1px solid #34d399; color: #34d399; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">إرسال</button>
+                            </div>
+                        </div>
+                    `;
+
+                    const textarea = innerContent.querySelector('.inline-edit-textarea');
+                    textarea.focus();
+                    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+                    const cancelBtn = innerContent.querySelector('.btn-cancel-edit');
+                    const saveBtn = innerContent.querySelector('.btn-save-edit');
+
+                    cancelBtn.onclick = () => {
+                        innerContent.innerHTML = '';
+                        const restoredTextEl = document.createElement('div');
+                        restoredTextEl.className = 'msg-text-body';
+                        restoredTextEl.textContent = originalText;
+                        innerContent.appendChild(restoredTextEl);
+                        optionsWrapper.style.display = 'inline-block';
+                    };
+
+                    saveBtn.onclick = async () => {
+                        const updatedText = textarea.value.trim();
+                        if (!updatedText) return;
+
+                        if (window.currentChatId) {
+                            try {
+                                await fetch(`/api/chat/${window.currentChatId}/last`, { method: 'DELETE' });
+                            } catch (err) {
+                                console.error('خطأ في حذف الرسالة الأخيرة:', err);
+                            }
+                        }
+
+                        // ⚡ تم تصحيح الفحص هنا لاستهداف صف البوت الصحيح (bot-message-row) وإزالته بنجاح
+                        const nextEl = rowDiv.nextElementSibling;
+                        if (nextEl && (nextEl.classList.contains('bot-message-row') || nextEl.querySelector('.message.bot'))) {
+                            nextEl.remove();
+                        }
+                        rowDiv.remove();
+
+                        if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'model') {
+                            chatHistory.pop();
+                        }
+                        if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'user') {
+                            chatHistory.pop();
+                        }
+
+                        if (userInput) {
+                            userInput.value = updatedText;
+                            sendMessage();
+                        }
+                    };
+                };
+                dropdown.appendChild(editBtn);
+            }
+
+            document.querySelectorAll('.msg-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+        };
+
+        rowDiv.appendChild(optionsWrapper);
+        chatBox.appendChild(rowDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return msgDiv;
+
+    } else {
+        // ⚡ حاوية رسالة النظام (البوت) مع زر النسخ الأخضر تحتها مباشرة
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'bot-message-row';
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', sender);
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'msg-content';
+
+        if (typeof marked !== 'undefined' && text) {
+            contentDiv.innerHTML = marked.parse(text);
+        } else {
+            contentDiv.textContent = text;
+        }
+        msgDiv.appendChild(contentDiv);
+        rowDiv.appendChild(msgDiv);
+
+        // 🌟 زر النسخ الأخضر الخاص برسالة النظام
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'bot-copy-btn';
+        copyBtn.innerHTML = `<i class="fa-solid fa-copy" style="color: #34d399; filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.7));"></i> <span>نسخ</span>`;
+        
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(text || '');
+            
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i class="fa-solid fa-check" style="color: #34d399;"></i> <span>تم النسخ</span>`;
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHTML;
+            }, 1500);
+        };
+
+        rowDiv.appendChild(copyBtn);
+        chatBox.appendChild(rowDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return msgDiv;
+    }
+}
+function triggerCircleRipple(event, callback) {
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+
+    if (event && event.clientX && event.clientY) {
+        x = event.clientX;
+        y = event.clientY;
+    } else if (event && event.currentTarget) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        x = rect.left + rect.width / 2;
+        y = rect.top + rect.height / 2;
+    }
+
+    const maxDistX = Math.max(x, window.innerWidth - x);
+    const maxDistY = Math.max(y, window.innerHeight - y);
+    const radius = Math.hypot(maxDistX, maxDistY) * 2.2;
+
+    let container = document.getElementById('rippleOverlayContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'rippleOverlayContainer';
+        container.className = 'ripple-overlay';
+        document.body.appendChild(container);
+    }
+
+    const circle = document.createElement('div');
+    circle.className = 'expanding-circle';
+    circle.style.left = `${x}px`;
+    circle.style.top = `${y}px`;
+    circle.style.width = `${radius}px`;
+    circle.style.height = `${radius}px`;
+
+    container.appendChild(circle);
+
+    if (typeof callback === 'function') {
+        setTimeout(callback, 200);
+    }
+
+    setTimeout(() => {
+        circle.remove();
+    }, 600);
+}
+
+function toggleSidebar(event) {
+    if (event && event.stopPropagation) event.stopPropagation();
+    const sidebar = document.getElementById('sidebar');
+    const chatForm = document.getElementById('chatForm'); // شريط الإرسال
+    
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+        
+        if (sidebar.classList.contains('active')) {
+            // رفع السايدبار إلى أقصى طبقة ممكنة وتأكيد ظهورها
+            sidebar.style.zIndex = '9999999';
+            // خفض طبقة شريط الإرسال أسفل السايدبار فوراً لضمان عدم تغطيته للوحة
+            if (chatForm) {
+                chatForm.style.position = 'relative';
+                chatForm.style.zIndex = '1';
+            }
+        } else {
+            // إرجاع الوضع الطبيعي عند الإغلاق
+            if (chatForm) {
+                chatForm.style.zIndex = '';
+            }
+        }
+    }
+}
+
+function startNewChat(event) {
+    if (event && event.stopPropagation) event.stopPropagation();
+
+    triggerCircleRipple(event, () => {
+        window.currentChatId = 'chat_' + Date.now();
+        chatHistory = [];
+
+        if (chatBox) chatBox.innerHTML = '';
+        document.body.classList.remove('chat-started');
+
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('active');
+
+        // ⚡ أضف هذا السطر لتحديث القائمة الجانبية فوراً
+        loadSidebarChats();
+
+        if (userInput) userInput.focus();
+    });
+}
+
+async function sendMessage(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!userInput) return;
+    const message = userInput.value.trim();
+    if (!message && attachedFiles.length === 0) return;
+    const actionBtn = document.getElementById('actionBtn');
+    if (actionBtn) actionBtn.disabled = true;
+
+    document.body.classList.add('chat-started');
+
+    const currentFiles = [...attachedFiles];
+    appendMessage(message, 'user', currentFiles);
+    userInput.value = '';
+    attachedFiles = [];
+    renderFilePreviews();
+
+    const typingIndicator = createTypingIndicator();
+
+    try {
+        const response = await fetch('/api/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                message: message,
+                mode: modeSelect ? modeSelect.value : 'fast',
+                history: chatHistory,
+                files: currentFiles.map(f => ({ mime_type: f.mime_type, data: f.data })),
+                chat_id: window.currentChatId,
+                device_id: getDeviceId()
+            })
+        });
+        if (actionBtn) actionBtn.disabled = false;
+
+        if (!response.ok) throw new Error("فشل الاتصال بالخادم");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+        let fullDisplayedText = '';
+        let isFirstChunk = true;
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(trimmedLine.replace('data: ', ''));
+                        if (data.text) {
+                            if (isFirstChunk) {
+                                fullDisplayedText = '';
+                                isFirstChunk = false;
+                            }
+                            // 🛑 تجميع النص في الخلفية بصمت دون تحديث لحظي للشاشة
+                            fullDisplayedText += data.text;
+                        }
+                    } catch (err) {
+                        console.error('خطأ في البث:', err);
+                    }
+                }
+            }
+        }
+
+        // إزالة مؤشر "جاري الكتابة" بعد اكتمال جلب البيانات
+        if (chatBox && chatBox.contains(typingIndicator)) {
+            chatBox.removeChild(typingIndicator);
+        }
+
+        if (fullDisplayedText.trim() !== '') {
+            chatHistory.push({ role: 'user', content: message });
+            chatHistory.push({ role: 'model', content: fullDisplayedText });
+            loadSidebarChats();
+
+            // 🌟 إظهار الرد النهائي دفعة واحدة وبشكل كامل مع التلاشي وتفعيل زر النسخ والتظليل
+            const botMsgDiv = appendMessage(fullDisplayedText, 'bot');
+            if (botMsgDiv) {
+                applyCodeHighlighting(botMsgDiv);
+            }
+        }
+
+    } catch (error) {
+        if (chatBox && chatBox.contains(typingIndicator)) {
+            chatBox.removeChild(typingIndicator);
+        }
+        appendMessage("⚠️ تعذر الاتصال بالخادم، يرجى التأكد من تشغيل السيرفر.", 'bot');
+    }
+}
+
+if (chatForm) {
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        sendMessage(e);
+    });
+}
+function createTypingIndicator() {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', 'bot');
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'msg-content';
+    contentDiv.innerHTML = `
+        <span class="typing-text-style">جاري الكتابة....</span>
+        <span class="typing-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </span>
+    `;
+    msgDiv.appendChild(contentDiv);
+    chatBox.appendChild(msgDiv);
+    
+    // 🛑 احذف أو علق هذا السطر حتى لا يتم التمرير عند ظهور "جاري الكتابة"
+    // chatBox.scrollTop = chatBox.scrollHeight; 
+    
+    return msgDiv;
+}
+function applyCodeHighlighting(element) {
+    if (!element) return;
+    if (typeof hljs !== 'undefined') {
+        element.querySelectorAll('pre code').forEach((codeBlock) => {
+            hljs.highlightElement(codeBlock);
+        });
+    }
+}
+
+async function loadSidebarChats() {
+    const sidebarList = document.getElementById('chatHistoryList');
+    if (!sidebarList) return;
+
+    try {
+        const deviceId = getDeviceId();
+const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' });        const chats = await res.json();
+        sidebarList.innerHTML = '';
+
+        if (!chats || chats.length === 0) {
+            sidebarList.innerHTML = '<div style="padding:15px; color:#64748b; text-align:center; font-size:0.85rem;">لا توجد محادثات سابقة</div>';
+            return;
+        }
+
+        // ⚡ إضافة زر "حذف كل السجلات" المتوهج في أعلى القائمة الجانبية
+        const clearAllBtn = document.createElement('div');
+        clearAllBtn.className = 'clear-history-box';
+        clearAllBtn.innerHTML = `
+            <i class="fa-solid fa-trash-can" style="filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.7));"></i>
+            <span>حذف كل السجلات</span>
+        `;
+        clearAllBtn.onclick = async () => {
+            if (confirm('هل أنت متأكد من رغبتك في حذف جميع السجلات؟')) {
+                try {
+                    let deleted = false;
+                    try {
+                        const bulkRes = await fetch(`/api/chats?device_id=${deviceId}`, { method: 'DELETE' });
+                        if (bulkRes.ok) deleted = true;
+                    } catch (e) {
+                        console.log('المسار الجماعي غير مدعوم، سيتم الحذف الفردي الآمن...');
+                    }
+
+                    // حل احتياطي مضمون 100% لحذف كافة المحادثات في حال عدم توفر نقطة نهاية جماعية
+                    if (!deleted && chats && chats.length > 0) {
+                        for (const chat of chats) {
+                            try {
+                                await fetch(`/api/chat/${chat.id}`, { method: 'DELETE' });
+                            } catch (err) {
+                                console.error('خطأ في حذف المحادثة:', chat.id, err);
+                            }
+                        }
+                    }
+
+                    loadSidebarChats();
+                    if (typeof startNewChat === 'function') {
+                        startNewChat();
+                    } else if (typeof chatBox !== 'undefined' && chatBox) {
+                        chatBox.innerHTML = '';
+                        window.currentChatId = null;
+                        document.body.classList.remove('chat-started');
+                    }
+                } catch (err) {
+                    console.error('خطأ أثناء حذف السجلات:', err);
+                }
+            }
+        };
+        sidebarList.appendChild(clearAllBtn);
+
+        chats.forEach(chat => {
+            const item = document.createElement('div');
+            item.className = `chat-item ${chat.id === window.currentChatId ? 'active' : ''}`;
+            
+            item.onclick = () => {
+                loadChatHistory(chat.id);
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.remove('active');
+            };
+
+       item.innerHTML = `
+             <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;">
+                 <div class="chat-history-icon">
+                     <i class="fa-solid fa-comment-dots"></i>
+                 </div>
+                 <div class="chat-item-title" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                     ${chat.title || 'محادثة جديدة'}
+                 </div>
+             </div>
+             <button class="delete-chat-btn-modern" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="حذف المحادثة">
+                 <i class="fa-solid fa-trash-can"></i>
+             </button>
+         `;
+            sidebarList.appendChild(item);
+        });
+    } catch (err) {
+        console.error("خطأ في جلب المحادثات:", err);
+    }
+}
+
+async function loadChatHistory(chatId) {
+    if (!chatId) return;
+    try {
+        window.currentChatId = chatId;
+        const res = await fetch(`/api/chat/${chatId}`);
+        const messages = await res.json();
+        if (!chatBox) return;
+
+        chatBox.innerHTML = '';
+        chatHistory = [];
+
+        messages.forEach(msg => {
+            chatHistory.push({ role: msg.sender, content: msg.text });
+            appendMessage(msg.text, msg.sender === 'user' ? 'user' : 'bot');
+        });
+
+        if (messages && messages.length > 0) {
+            document.body.classList.add('chat-started');
+        } else {
+            document.body.classList.remove('chat-started');
+        }
+
+        loadSidebarChats();
+    } catch (err) {
+        console.error("خطأ في تحميل المحادثة:", err);
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if (typeof mediaDropdown !== 'undefined' && mediaDropdown) {
+        mediaDropdown.classList.remove('show');
+    }
+    
+    document.querySelectorAll('.msg-dropdown').forEach(d => {
+        d.classList.remove('show');
+    });
+    
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    if (sidebar && sidebar.classList.contains('active')) {
+        if (!sidebar.contains(e.target) && sidebarToggle && !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeSettings() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.style.display = 'none';
+}
+
+window.addEventListener('click', (event) => {
+    const modal = document.getElementById('settingsModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const oldSelect = document.getElementById('modeSelect');
+    if (!oldSelect) return;
+
+    oldSelect.style.display = 'none';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mode-dropdown-wrapper';
+    wrapper.id = 'modeWrapper';
+
+    wrapper.innerHTML = `
+        <button type="button" class="mode-select-btn" id="btnModeToggle">
+            <i class="fa-solid fa-bolt" id="modeIcon" style="color: #4ade80;"></i> 
+            <span id="modeText">إجابة سريعة</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-right: auto; opacity: 0.7;"></i>
+        </button>
+        <div class="mode-dropdown-menu" id="modeDropdownMenu">
+            <button type="button" class="mode-dropdown-item" data-value="fast">
+                <i class="fa-solid fa-bolt" style="color: #4ade80;"></i> إجابة سريعة
+            </button>
+            <button type="button" class="mode-dropdown-item" data-value="advanced">
+                <i class="fa-solid fa-brain" style="color: #38bdf8;"></i> بحث متقدم
+            </button>
+        </div>
+    `;
+
+    oldSelect.parentNode.insertBefore(wrapper, oldSelect);
+
+    const btnModeToggle = document.getElementById('btnModeToggle');
+    const modeDropdownMenu = document.getElementById('modeDropdownMenu');
+    const modeText = document.getElementById('modeText');
+    const modeIcon = document.getElementById('modeIcon');
+
+    btnModeToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (typeof mediaDropdown !== 'undefined' && mediaDropdown) mediaDropdown.classList.remove('show');
+        modeDropdownMenu.classList.toggle('show');
+    });
+
+    modeDropdownMenu.querySelectorAll('.mode-dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const val = item.getAttribute('data-value');
+            oldSelect.value = val;
+
+            if (val === 'fast') {
+                modeText.innerText = 'إجابة سريعة';
+                modeIcon.className = 'fa-solid fa-bolt';
+                modeIcon.style.color = '#4ade80';
+            } else {
+                modeText.innerText = 'بحث متقدم';
+                modeIcon.className = 'fa-solid fa-brain';
+                modeIcon.style.color = '#38bdf8';
+            }
+
+            modeDropdownMenu.classList.remove('show');
+        });
+    });
+
+    document.addEventListener('click', () => {
+        modeDropdownMenu.classList.remove('show');
+    });
+});
+
+async function deleteChat(chatId) {
+    if (!confirm('هل أنت متأكد من حذف هذه المحادثة نهائياً؟')) return;
+    try {
+        const res = await fetch(`/api/chat/${chatId}`, { method: 'DELETE' });
+        if (res.ok) {
+            if (window.currentChatId === chatId) {
+                startNewChat();
+            } else {
+                loadSidebarChats();
+            }
+        } else {
+            alert('تعذر حذف المحادثة.');
+        }
+    } catch (err) {
+        console.error('خطأ في حذف المحادثة:', err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // البحث عن زر تسجيل الدخول أو لوحة التحكم الذي يوجه إلى /login
+    const adminBtn = document.querySelector('a[href="/login"]') || document.querySelector('a[href*="login"]');
+    
+    if (adminBtn) {
+        adminBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // إيقاف الانتقال الفوري مؤقتاً
+            const targetUrl = this.getAttribute('href');
+            
+            // إنشاء طبقة التلاشي إذا لم تكن موجودة
+            let overlay = document.getElementById('pageTransitionOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'pageTransitionOverlay';
+                overlay.className = 'page-transition-overlay';
+                document.body.appendChild(overlay);
+            }
+            
+            // تفعيل التلاشي السلس
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
+            // الانتقال لصفحة تسجيل الدخول بعد اكتمال التلاشي (0.6 ثانية)
+            setTimeout(function() {
+                window.location.href = targetUrl;
+            }, 600);
+        });
+    }
+});
+
+/* ==================== مراقبة وضمان ظهور زر النسخ تلقائياً لرسائل البوت ==================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationsObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) {
+                    // إذا تمت إضافة صف رسالة بوت أو فقاعة بوت ولا تحتوي على زر نسخ
+                    const botRows = node.querySelectorAll ? node.querySelectorAll('.bot-message-row, .message.bot') : [];
+                    
+                    // فحص العنصر نفسه أو أبنائه
+                    if (node.classList && (node.classList.contains('bot-message-row') || node.classList.contains('message bot'))) {
+                        checkAndInjectCopyBtn(node);
+                    }
+                    
+                    if (botRows.length > 0) {
+                        botRows.forEach(row => checkAndInjectCopyBtn(row));
+                    }
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    function checkAndInjectCopyBtn(element) {
+        // تحديد الصف الأب لرسالة البوت
+        let row = element.classList.contains('bot-message-row') ? element : element.closest('.bot-message-row');
+        
+        if (!row) {
+            // إذا كانت فقاعة بوت وليست داخل row، نقوم بإنشاء row احترافي لها
+            const msgContent = element.classList.contains('message bot') ? element : element.querySelector('.message.bot');
+            if (msgContent) {
+                row = document.createElement('div');
+                row.className = 'bot-message-row';
+                msgContent.parentNode.insertBefore(row, msgContent);
+                row.appendChild(msgContent);
+            }
+        }
+
+        if (row && !row.querySelector('.bot-copy-btn')) {
+            const msgDiv = row.querySelector('.message.bot');
+            if (!msgDiv) return;
+
+            const textToCopy = msgDiv.innerText || '';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'bot-copy-btn';
+            copyBtn.innerHTML = `<i class="fa-solid fa-copy" style="color: #34d399; filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.7));"></i> <span>نسخ</span>`;
+            
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(textToCopy);
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i class="fa-solid fa-check" style="color: #34d399;"></i> <span>تم النسخ</span>`;
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                }, 1500);
+            };
+
+            row.appendChild(copyBtn);
+        }
+    }
+});
+document.addEventListener('DOMContentLoaded', () => {
+    let overlay = document.getElementById('offlineOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'offlineOverlay';
+        overlay.innerHTML = `
+            <div class="offline-card-box">
+                <img src="/static/images/offline.png" alt="Offline Android" class="offline-custom-img">
+                <h3>انقطع الاتصال بالإنترنت</h3>
+                <p>عذراً، تم فقدان الاتصال بالشبكة. لا يمكنك استخدام النظام حتى يتم عودة الإنترنت.</p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    let offlineTimer = null;
+    const confirmationDelay = 4000; // فترة السماح (4 ثوانٍ لتجنب التذبذب المؤقت)
+
+    async function checkRealInternet() {
+        if (!navigator.onLine) return false;
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            await fetch('https://www.google.com/favicon.ico?_=' + Date.now(), {
+                mode: 'no-cors',
+                signal: controller.signal,
+                cache: 'no-store'
+            });
+            clearTimeout(timeoutId);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function monitorConnection() {
+        const isOnline = await checkRealInternet();
+
+        if (isOnline) {
+            if (offlineTimer) {
+                clearTimeout(offlineTimer);
+                offlineTimer = null;
+            }
+            overlay.classList.remove('show');
+        } else {
+            if (!offlineTimer && !overlay.classList.contains('show')) {
+                offlineTimer = setTimeout(async () => {
+                    const stillOffline = !(await checkRealInternet());
+                    if (stillOffline) {
+                        overlay.classList.add('show');
+                    }
+                    offlineTimer = null;
+                }, confirmationDelay);
+            }
+        }
+    }
+    // استبدل سطر التمرير القديم بهذا السطر:
+setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}, 50); // تأخير 50 ملي ثانية يضمن وصول الشريط للقاع 100%
+    setInterval(monitorConnection, 5000);
+    monitorConnection();
+});
+
+</script>
+</body>
+</html>

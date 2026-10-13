@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | Taiger Chat</title>
+    <!-- مكتبة الأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #070a10;
+            background-image: radial-gradient(circle at 50% 30%, rgba(34, 197, 94, 0.12) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* توهج خلفي ناعم باللون الأخضر */
+        .bg-glow {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: rgba(34, 197, 94, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* الكارت الزجاجي */
+        .glass-card {
+            position: relative;
+            width: 90%;
+            max-width: 380px;
+            padding: 38px 28px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+                        0 0 15px rgba(34, 197, 94, 0.08);
+            color: #ffffff;
+            z-index: 10;
+        }
+
+        /* زر العودة */
+        .back-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .back-btn:hover {
+            color: #22c55e;
+        }
+
+        /* الترويسة */
+        .card-header {
+            text-align: center;
+            margin-top: 12px;
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+        }
+
+        .card-header h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .brand-subtitle {
+            font-size: 12px;
+            color: #22c55e;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* النموذج وحقول الإدخال */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-group .field-icon {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 14px;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 42px 12px 14px;
+            background: #090d16;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .input-group input:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.25);
+        }
+
+        .input-group input:focus ~ .field-icon {
+            color: #22c55e;
+        }
+
+        /* زر التأكيد باللون الأخضر الأخاذ */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 4px;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #15803d, #16a34a);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(34, 197, 94, 0.45);
+        }
+
+        .error-msg {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="glass-card">
+        <a href="/" class="back-btn">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>عودة</span>
+        </a>
+
+        <div class="card-header">
+            <div class="brand-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2>تسجيل الدخول الى لوحة التحكم</h2>
+            <p class="brand-subtitle">Yemen Android AI </p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+            <div class="input-group">
+                <input type="text" id="username" name="username" placeholder="اسم المستخدم..." required autocomplete="off">
+                <i class="fa-solid fa-user field-icon"></i>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="كلمة المرور..." required>
+                <i class="fa-solid fa-lock field-icon"></i>
+            </div>
+
+            <div id="errorMsg" class="error-msg"></div>
+
+            <button type="submit" class="submit-btn">
+                <span>تسجيل الدخول</span>
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const usernameInput = document.getElementById('username').value.trim();
+    const passwordInput = document.getElementById('password').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+    
+    errorMsg.style.display = 'none';
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                username: usernameInput, 
+                password: passwordInput 
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            // 🌟 تفعيل تأثير التلاشي فور نجاح تسجيل الدخول
+            let overlay = document.querySelector('.page-transition-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'page-transition-overlay';
+                document.body.appendChild(overlay);
+            }
+            // إظهار الشاشة السوداء بتدريج ناعم
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.style.visibility = 'visible';
+            }, 10);
+
+            // الانتقال لصفحة الـ admin بعد انتهاء التلاشي (0.5 ثانية)
+            setTimeout(() => {
+                window.location.href = data.redirect || '/admin';
+            }, 900);
+
+        } else {
+            errorMsg.textContent = data.message || 'بيانات الدخول غير صحيحة!';
+            errorMsg.style.display = 'block';
+        }
+    } catch (err) {
+        errorMsg.textContent = 'حدث خطأ في الاتصال بالخادم!';
+        errorMsg.style.display = 'block';
+    }
+});
+    </script>
+</body>
+</html>
