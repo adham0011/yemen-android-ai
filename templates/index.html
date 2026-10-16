@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تايجر شات - منصة محادثة ذكية وتطبيقات أندرويد متطورة وإدارة متكاملة">
+<meta name="keywords" content="Tiger Chat, تايجر شات, Yemen Android AI, شات ذكي">
+<meta name="author" content="ايمن بن فارس">
+<meta name="robots" content="index, follow">
     <title>Taiger Chat | Yemen Android AI</title>
     <!-- FontAwesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,6 +16,17 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- مكتبة Highlight.js لتظليل الأكواد البرمجية -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+   <!-- أيقونة الموقع القياسية -->
+<link rel="icon" type="image/png" href="/static/images/logo.png">
+<!-- الأيقونة القياسية للمتصفح -->
+<link rel="icon" type="image/png" sizes="32x32" href="/static/images/logo.png">
+
+<!-- أيقونة عالية الدقة لاختصارات هواتف أندرويد وآبل (الشاشة الرئيسية) -->
+<link rel="apple-touch-icon" sizes="180x180" href="/static/images/logo.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/static/images/logo-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/static/images/logo-512.png">
+<!-- أيقونة خاصة بالهواتف واختصارات الشاشة الرئيسية (Apple & Android) -->
+<link rel="apple-touch-icon" href="/static/images/logo.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
@@ -36,6 +51,7 @@
 <!-- الحاوية الرئيسية للتطبيق -->
 <header class="app-header">
     <!-- القائمة الجانبية لسجل المحادثات -->
+<!-- القائمة الجانبية لسجل المحادثات -->
     <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div style="display: flex; align-items: center; gap: 8px; color: #65ff32; font-weight: bold; font-size: 1rem;">
@@ -49,24 +65,44 @@
 
         <!-- قائمة المحادثات المخزنة مباشرة -->
         <div id="chatHistoryList" class="chat-history-list"></div>
+<!-- 🌟 حقوق المطور وأزرار التواصل في الأسفل -->
+        <div class="sidebar-footer-credits">
+            <span>تم تطوير الموقع بواسطة أيمن بن فارس 2026</span>
+            
+<div class="developer-contact-btns">
+                <!-- زر الاتصال المباشر -->
+                <a href="tel:778590705" class="dev-contact-btn dev-call-btn" title="اتصال مباشر">
+                    <i class="fa-solid fa-phone"></i>
+                </a>
+                
+                <!-- زر محادثة الواتساب (باستخدام فئة العلامات الصحيحة fa-brands) -->
+                <a href="https://wa.me/967778590705" target="_blank" class="dev-contact-btn dev-wa-btn" title="محادثة واتساب">
+                    <i class="fa-brands fa-whatsapp" style="font-weight: 400 !important;"></i>
+                </a>
+                <!-- زر إنستجرام -->
+                <a href="https://www.instagram.com/_ad0f?vrfl=MTAyOWs3amp0cWExeg==" target="_blank" class="dev-contact-btn dev-insta-btn" title="حساب إنستجرام">
+                    <i class="fa-brands fa-instagram" style="font-weight: 400 !important;"></i>
+                </a>
+            </div>
+        </div>
     </aside>
 
-    <div class="header-left">
-        <!-- زر سجل المحادثات المربع المضيء (مثلث فقط) -->
-        <button type="button" id="sidebarToggle" class="theme-header-btn square-icon-btn" title="سجل المحادثات" onclick="toggleSidebar(event)">
-            <i class="fa-solid fa-play" style="font-size: 13px;"></i>
-        </button>
+<div class="header-left">
+  <!-- زر سجل المحادثات -->
+<button type="button" id="sidebarToggle" class="theme-header-btn square-icon-btn icon-only-mobile" title="سجل المحادثات" onclick="toggleSidebar(event)">
+    <i class="fa-solid fa-play" style="font-size: 13px;"></i>
+</button>
 
-        <a href="{{ url_for('login') }}" class="theme-header-btn">
-            <i class="fa-solid fa-shield-halved"></i>
-            لوحة التحكم
-        </a>
+  <a href="{{ url_for('login') }}" class="theme-header-btn square-icon-btn icon-only-mobile" title="لوحة التحكم">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span class="btn-text"></span>
+</a>
 
-        <button type="button" onclick="startNewChat(event)" class="theme-header-btn">
-            <i class="fa-solid fa-plus"></i>
-            محادثة جديدة
-        </button>
-    </div>
+<button type="button" onclick="startNewChat(event)" class="theme-header-btn square-icon-btn icon-only-mobile" title="محادثة جديدة">
+    <i class="fa-solid fa-plus"></i>
+    <span class="btn-text"></span>
+</button>
+</div>
 
     <div class="chat-brand" id="chatBrand">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Tiger Chat Logo">
@@ -88,15 +124,63 @@
     <i class="fa-solid fa-rotate-right"></i>
 </div>
 
-<!-- منطقة الإدخال والإرسال -->
+<!-- نموذج الإرسال بترتيب مخصص (يمين: + ، وسط: النص ، يسار: إرسال) -->
 <form id="chatForm" class="input-area">
-    <select id="modeSelect" class="mode-select">
-        <option value="fast">إجابة سريعة</option>
+    <!-- عنصر مخفي لتوافق الوضع مع الباك اند -->
+    <select id="modeSelect" style="display: none;">
+        <option value="fast" selected>إجابة سريعة</option>
         <option value="advanced">بحث متقدم</option>
     </select>
 
+    <!-- 1. زر + (في أقصى اليمين) -->
+    <div class="plus-menu-wrapper" id="plusMenuWrapper">
+        <button type="button" class="plus-main-btn" id="btnPlusToggle" title="خيارات إضافية">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+        <div class="plus-dropdown-menu" id="plusDropdownMenu">
+            <!-- الخيار الأول: نوع الرد -->
+            <div class="dropdown-category">
+                <button type="button" class="category-toggle-btn" id="toggleModeMenu">
+                    <span><i class="fa-solid fa-sliders" style="color: #4ade80;"></i> نوع الرد</span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: #94a3b8;"></i>
+                </button>
+                <div class="submenu-container" id="submenuMode" style="display: none;">
+                    <button type="button" class="plus-dropdown-item mode-opt active-mode" data-value="fast">
+                        <i class="fa-solid fa-bolt" style="color: #4ade80;"></i> إجابة سريعة
+                    </button>
+                    <button type="button" class="plus-dropdown-item mode-opt" data-value="advanced">
+                        <i class="fa-solid fa-brain" style="color: #38bdf8;"></i> بحث متقدم
+                    </button>
+                </div>
+            </div>
+
+            <div class="dropdown-divider" style="height: 1px; background: rgba(255, 255, 255, 0.1); margin: 6px 0;"></div>
+
+            <!-- الخيار الثاني: إرفاق وسائط -->
+            <div class="dropdown-category">
+                <button type="button" class="category-toggle-btn" id="toggleMediaMenu">
+                    <span><i class="fa-solid fa-paperclip" style="color: #38bdf8;"></i> إرفاق وسائط</span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: #94a3b8;"></i>
+                </button>
+                <div class="submenu-container" id="submenuMedia" style="display: none;">
+                    <button type="button" class="plus-dropdown-item" id="optImgMob">
+                        <i class="fa-solid fa-image" style="color: #38bdf8;"></i> صور
+                    </button>
+                    <button type="button" class="plus-dropdown-item" id="optVidMob">
+                        <i class="fa-solid fa-video" style="color: #a855f7;"></i> فيديو
+                    </button>
+                    <button type="button" class="plus-dropdown-item" id="optFileMob">
+                        <i class="fa-solid fa-file-lines" style="color: #34d399;"></i> مستندات وملفات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. حقل كتابة النص (ممتد في الوسط) -->
     <input type="text" id="userInput" placeholder="اكتب استفسارك هنا..." required autocomplete="off">
 
+    <!-- 3. زر الإرسال (في أقصى اليسار) -->
     <button class="btn btn-primary" type="submit" id="actionBtn">
         <i class="fa-solid fa-paper-plane" id="btnIcon"></i> <span id="btnText">إرسال</span>
     </button>
@@ -138,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         sessionStorage.setItem('splashShown', 'true');
 
-        const totalDuration = 9000;
+        const totalDuration = 900;
         const intervalTime = 55;   
         let elapsedTime = 0;
 
@@ -213,29 +297,6 @@ const fileInput = document.createElement('input');
 fileInput.type = 'file'; fileInput.accept = '.pdf,.doc,.docx,.txt,.zip,.rar,application/*'; fileInput.multiple = true; fileInput.style.display = 'none';
 document.body.append(imgInput, videoInput, fileInput);
 
-const mediaWrapper = document.createElement('div');
-mediaWrapper.className = 'media-btn-wrapper';
-mediaWrapper.innerHTML = `
-    <button type="button" class="media-btn" id="btnMedia" title="إرفاق وسائط وملفات">
-        <i class="fa-solid fa-paperclip"></i>
-    </button>
-    <div class="media-dropdown" id="mediaDropdown">
-        <button type="button" class="dropdown-item" id="optImg">
-            <i class="fa-solid fa-image" style="color: #38bdf8;"></i> صور
-        </button>
-        <button type="button" class="dropdown-item" id="optVid">
-            <i class="fa-solid fa-video" style="color: #a855f7;"></i> فيديو
-        </button>
-        <button type="button" class="dropdown-item" id="optFile">
-            <i class="fa-solid fa-file-lines" style="color: #34d399;"></i> ملفات
-        </button>
-    </div>
-`;
-
-if (chatForm && userInput) {
-    chatForm.insertBefore(mediaWrapper, userInput);
-}
-
 const previewContainer = document.createElement('div');
 previewContainer.className = 'file-preview-container';
 previewContainer.style.display = 'none';
@@ -243,18 +304,76 @@ if (chatForm) {
     chatForm.parentNode.insertBefore(previewContainer, chatForm);
 }
 
-const btnMedia = mediaWrapper.querySelector('#btnMedia');
-const mediaDropdown = mediaWrapper.querySelector('#mediaDropdown');
+document.addEventListener('DOMContentLoaded', () => {
+    const btnPlusToggle = document.getElementById('btnPlusToggle');
+    const plusDropdownMenu = document.getElementById('plusDropdownMenu');
+    const modeSelectEl = document.getElementById('modeSelect');
 
-btnMedia.addEventListener('click', (e) => {
-    e.stopPropagation();
-    mediaDropdown.classList.toggle('show');
+    const toggleModeMenu = document.getElementById('toggleModeMenu');
+    const submenuMode = document.getElementById('submenuMode');
+    const toggleMediaMenu = document.getElementById('toggleMediaMenu');
+    const submenuMedia = document.getElementById('submenuMedia');
+
+    if (btnPlusToggle && plusDropdownMenu) {
+        btnPlusToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            plusDropdownMenu.classList.toggle('show');
+            // إغلاق القوائم الفرعية دائمًا عند فتح القائمة الرئيسية من زر +
+            if (submenuMode) submenuMode.classList.remove('show-sub');
+            if (submenuMedia) submenuMedia.classList.remove('show-sub');
+        });
+    }
+
+    // الضغط على "نوع الرد" لإظهار خياراته وإخفاء الوسائط
+    if (toggleModeMenu && submenuMode) {
+        toggleModeMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            submenuMode.classList.toggle('show-sub');
+            if (submenuMedia) submenuMedia.classList.remove('show-sub');
+        });
+    }
+
+    // الضغط على "إرفاق وسائط" لإظهار خياراته وإخفاء نوع الرد
+    if (toggleMediaMenu && submenuMedia) {
+        toggleMediaMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            submenuMedia.classList.toggle('show-sub');
+            if (submenuMode) submenuMode.classList.remove('show-sub');
+        });
+    }
+
+    // اختيار نوع الرد وتطبيق التغيير
+    if (plusDropdownMenu) {
+        plusDropdownMenu.querySelectorAll('.mode-opt').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = item.getAttribute('data-value');
+                if (modeSelectEl) modeSelectEl.value = val;
+
+                plusDropdownMenu.querySelectorAll('.mode-opt').forEach(opt => opt.classList.remove('active-mode'));
+                item.classList.add('active-mode');
+                plusDropdownMenu.classList.remove('show');
+                if (submenuMode) submenuMode.classList.remove('show-sub');
+            });
+        });
+    }
+
+    // ربط أزرار الوسائط بالعناصر المخفية
+    const optImgMob = document.getElementById('optImgMob');
+    const optVidMob = document.getElementById('optVidMob');
+    const optFileMob = document.getElementById('optFileMob');
+
+    if (optImgMob) optImgMob.onclick = () => { if(plusDropdownMenu) plusDropdownMenu.classList.remove('show'); if(submenuMedia) submenuMedia.classList.remove('show-sub'); if(typeof imgInput !== 'undefined') imgInput.click(); };
+    if (optVidMob) optVidMob.onclick = () => { if(plusDropdownMenu) plusDropdownMenu.classList.remove('show'); if(submenuMedia) submenuMedia.classList.remove('show-sub'); if(typeof videoInput !== 'undefined') videoInput.click(); };
+    if (optFileMob) optFileMob.onclick = () => { if(plusDropdownMenu) plusDropdownMenu.classList.remove('show'); if(submenuMedia) submenuMedia.classList.remove('show-sub'); if(typeof fileInput !== 'undefined') fileInput.click(); };
+
+    // إغلاق الكل عند النقر في أي مكان خارج القائمة
+    document.addEventListener('click', () => {
+        if (plusDropdownMenu) plusDropdownMenu.classList.remove('show');
+        if (submenuMode) submenuMode.classList.remove('show-sub');
+        if (submenuMedia) submenuMedia.classList.remove('show-sub');
+    });
 });
-
-mediaWrapper.querySelector('#optImg').onclick = () => { mediaDropdown.classList.remove('show'); imgInput.click(); };
-mediaWrapper.querySelector('#optVid').onclick = () => { mediaDropdown.classList.remove('show'); videoInput.click(); };
-mediaWrapper.querySelector('#optFile').onclick = () => { mediaDropdown.classList.remove('show'); fileInput.click(); };
-
 [imgInput, videoInput, fileInput].forEach(inputEl => {
     inputEl.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
@@ -363,7 +482,6 @@ function appendMessage(text, sender, files = []) {
         msgDiv.appendChild(contentDiv);
         rowDiv.appendChild(msgDiv);
 
-        // ⚡ زر الخيارات (الثلاث نقاط) خارج صندوق الرسالة وتحتها تماماً
         const optionsWrapper = document.createElement('div');
         optionsWrapper.className = 'msg-options-wrapper';
         optionsWrapper.innerHTML = `
@@ -384,7 +502,6 @@ function appendMessage(text, sender, files = []) {
 
             dropdown.innerHTML = '';
 
-           // زر النسخ (متاح دائماً لجميع الرسائل) مع تفعيل تأثير "تم النسخ"
             const copyBtn = document.createElement('button');
             copyBtn.type = 'button';
             copyBtn.className = 'msg-dropdown-item btn-copy-msg';
@@ -404,7 +521,6 @@ function appendMessage(text, sender, files = []) {
             };
             dropdown.appendChild(copyBtn);
 
-            // زر التعديل (يظهر للرسالة الأخيرة فقط)
             if (isLast) {
                 const editBtn = document.createElement('button');
                 editBtn.type = 'button';
@@ -457,7 +573,6 @@ function appendMessage(text, sender, files = []) {
                             }
                         }
 
-                        // ⚡ تم تصحيح الفحص هنا لاستهداف صف البوت الصحيح (bot-message-row) وإزالته بنجاح
                         const nextEl = rowDiv.nextElementSibling;
                         if (nextEl && (nextEl.classList.contains('bot-message-row') || nextEl.querySelector('.message.bot'))) {
                             nextEl.remove();
@@ -492,7 +607,6 @@ function appendMessage(text, sender, files = []) {
         return msgDiv;
 
     } else {
-        // ⚡ حاوية رسالة النظام (البوت) مع زر النسخ الأخضر تحتها مباشرة
         const rowDiv = document.createElement('div');
         rowDiv.className = 'bot-message-row';
 
@@ -509,7 +623,6 @@ function appendMessage(text, sender, files = []) {
         msgDiv.appendChild(contentDiv);
         rowDiv.appendChild(msgDiv);
 
-        // 🌟 زر النسخ الأخضر الخاص برسالة النظام
         const copyBtn = document.createElement('button');
         copyBtn.type = 'button';
         copyBtn.className = 'bot-copy-btn';
@@ -531,6 +644,7 @@ function appendMessage(text, sender, files = []) {
         return msgDiv;
     }
 }
+
 function triggerCircleRipple(event, callback) {
     let x = window.innerWidth / 2;
     let y = window.innerHeight / 2;
@@ -577,21 +691,18 @@ function triggerCircleRipple(event, callback) {
 function toggleSidebar(event) {
     if (event && event.stopPropagation) event.stopPropagation();
     const sidebar = document.getElementById('sidebar');
-    const chatForm = document.getElementById('chatForm'); // شريط الإرسال
+    const chatForm = document.getElementById('chatForm');
     
     if (sidebar) {
         sidebar.classList.toggle('active');
         
         if (sidebar.classList.contains('active')) {
-            // رفع السايدبار إلى أقصى طبقة ممكنة وتأكيد ظهورها
             sidebar.style.zIndex = '9999999';
-            // خفض طبقة شريط الإرسال أسفل السايدبار فوراً لضمان عدم تغطيته للوحة
             if (chatForm) {
                 chatForm.style.position = 'relative';
                 chatForm.style.zIndex = '1';
             }
         } else {
-            // إرجاع الوضع الطبيعي عند الإغلاق
             if (chatForm) {
                 chatForm.style.zIndex = '';
             }
@@ -612,7 +723,6 @@ function startNewChat(event) {
         const sidebar = document.getElementById('sidebar');
         if (sidebar) sidebar.classList.remove('active');
 
-        // ⚡ أضف هذا السطر لتحديث القائمة الجانبية فوراً
         loadSidebarChats();
 
         if (userInput) userInput.focus();
@@ -678,7 +788,6 @@ async function sendMessage(e) {
                                 fullDisplayedText = '';
                                 isFirstChunk = false;
                             }
-                            // 🛑 تجميع النص في الخلفية بصمت دون تحديث لحظي للشاشة
                             fullDisplayedText += data.text;
                         }
                     } catch (err) {
@@ -688,7 +797,6 @@ async function sendMessage(e) {
             }
         }
 
-        // إزالة مؤشر "جاري الكتابة" بعد اكتمال جلب البيانات
         if (chatBox && chatBox.contains(typingIndicator)) {
             chatBox.removeChild(typingIndicator);
         }
@@ -698,7 +806,6 @@ async function sendMessage(e) {
             chatHistory.push({ role: 'model', content: fullDisplayedText });
             loadSidebarChats();
 
-            // 🌟 إظهار الرد النهائي دفعة واحدة وبشكل كامل مع التلاشي وتفعيل زر النسخ والتظليل
             const botMsgDiv = appendMessage(fullDisplayedText, 'bot');
             if (botMsgDiv) {
                 applyCodeHighlighting(botMsgDiv);
@@ -717,8 +824,10 @@ if (chatForm) {
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
         sendMessage(e);
+        
     });
 }
+
 function createTypingIndicator() {
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('message', 'bot');
@@ -736,11 +845,9 @@ function createTypingIndicator() {
     msgDiv.appendChild(contentDiv);
     chatBox.appendChild(msgDiv);
     
-    // 🛑 احذف أو علق هذا السطر حتى لا يتم التمرير عند ظهور "جاري الكتابة"
-    // chatBox.scrollTop = chatBox.scrollHeight; 
-    
     return msgDiv;
 }
+
 function applyCodeHighlighting(element) {
     if (!element) return;
     if (typeof hljs !== 'undefined') {
@@ -756,7 +863,8 @@ async function loadSidebarChats() {
 
     try {
         const deviceId = getDeviceId();
-const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' });        const chats = await res.json();
+        const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' });
+        const chats = await res.json();
         sidebarList.innerHTML = '';
 
         if (!chats || chats.length === 0) {
@@ -764,7 +872,6 @@ const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' 
             return;
         }
 
-        // ⚡ إضافة زر "حذف كل السجلات" المتوهج في أعلى القائمة الجانبية
         const clearAllBtn = document.createElement('div');
         clearAllBtn.className = 'clear-history-box';
         clearAllBtn.innerHTML = `
@@ -782,7 +889,6 @@ const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' 
                         console.log('المسار الجماعي غير مدعوم، سيتم الحذف الفردي الآمن...');
                     }
 
-                    // حل احتياطي مضمون 100% لحذف كافة المحادثات في حال عدم توفر نقطة نهاية جماعية
                     if (!deleted && chats && chats.length > 0) {
                         for (const chat of chats) {
                             try {
@@ -818,19 +924,19 @@ const res = await fetch(`/api/chats?device_id=${deviceId}`, { cache: 'no-store' 
                 if (sidebar) sidebar.classList.remove('active');
             };
 
-       item.innerHTML = `
-             <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;">
-                 <div class="chat-history-icon">
-                     <i class="fa-solid fa-comment-dots"></i>
-                 </div>
-                 <div class="chat-item-title" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                     ${chat.title || 'محادثة جديدة'}
-                 </div>
-             </div>
-             <button class="delete-chat-btn-modern" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="حذف المحادثة">
-                 <i class="fa-solid fa-trash-can"></i>
-             </button>
-         `;
+            item.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;">
+                    <div class="chat-history-icon">
+                        <i class="fa-solid fa-comment-dots"></i>
+                    </div>
+                    <div class="chat-item-title" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${chat.title || 'محادثة جديدة'}
+                    </div>
+                </div>
+                <button class="delete-chat-btn-modern" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="حذف المحادثة">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
             sidebarList.appendChild(item);
         });
     } catch (err) {
@@ -867,10 +973,6 @@ async function loadChatHistory(chatId) {
 }
 
 document.addEventListener('click', (e) => {
-    if (typeof mediaDropdown !== 'undefined' && mediaDropdown) {
-        mediaDropdown.classList.remove('show');
-    }
-    
     document.querySelectorAll('.msg-dropdown').forEach(d => {
         d.classList.remove('show');
     });
@@ -883,6 +985,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 function openSettingsModal() {
     const modal = document.getElementById('settingsModal');
     if (modal) modal.style.display = 'flex';
@@ -898,69 +1001,6 @@ window.addEventListener('click', (event) => {
     if (event.target === modal) {
         modal.style.display = 'none';
     }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const oldSelect = document.getElementById('modeSelect');
-    if (!oldSelect) return;
-
-    oldSelect.style.display = 'none';
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'mode-dropdown-wrapper';
-    wrapper.id = 'modeWrapper';
-
-    wrapper.innerHTML = `
-        <button type="button" class="mode-select-btn" id="btnModeToggle">
-            <i class="fa-solid fa-bolt" id="modeIcon" style="color: #4ade80;"></i> 
-            <span id="modeText">إجابة سريعة</span>
-            <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-right: auto; opacity: 0.7;"></i>
-        </button>
-        <div class="mode-dropdown-menu" id="modeDropdownMenu">
-            <button type="button" class="mode-dropdown-item" data-value="fast">
-                <i class="fa-solid fa-bolt" style="color: #4ade80;"></i> إجابة سريعة
-            </button>
-            <button type="button" class="mode-dropdown-item" data-value="advanced">
-                <i class="fa-solid fa-brain" style="color: #38bdf8;"></i> بحث متقدم
-            </button>
-        </div>
-    `;
-
-    oldSelect.parentNode.insertBefore(wrapper, oldSelect);
-
-    const btnModeToggle = document.getElementById('btnModeToggle');
-    const modeDropdownMenu = document.getElementById('modeDropdownMenu');
-    const modeText = document.getElementById('modeText');
-    const modeIcon = document.getElementById('modeIcon');
-
-    btnModeToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (typeof mediaDropdown !== 'undefined' && mediaDropdown) mediaDropdown.classList.remove('show');
-        modeDropdownMenu.classList.toggle('show');
-    });
-
-    modeDropdownMenu.querySelectorAll('.mode-dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const val = item.getAttribute('data-value');
-            oldSelect.value = val;
-
-            if (val === 'fast') {
-                modeText.innerText = 'إجابة سريعة';
-                modeIcon.className = 'fa-solid fa-bolt';
-                modeIcon.style.color = '#4ade80';
-            } else {
-                modeText.innerText = 'بحث متقدم';
-                modeIcon.className = 'fa-solid fa-brain';
-                modeIcon.style.color = '#38bdf8';
-            }
-
-            modeDropdownMenu.classList.remove('show');
-        });
-    });
-
-    document.addEventListener('click', () => {
-        modeDropdownMenu.classList.remove('show');
-    });
 });
 
 async function deleteChat(chatId) {
@@ -982,12 +1022,11 @@ async function deleteChat(chatId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // البحث عن زر تسجيل الدخول أو لوحة التحكم الذي يوجه إلى /login
     const adminBtn = document.querySelector('a[href="/login"]') || document.querySelector('a[href*="login"]');
     
     if (adminBtn) {
         adminBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // إيقاف الانتقال الفوري مؤقتاً
+            e.preventDefault(); // منع الانتقال الفوري
             const targetUrl = this.getAttribute('href');
             
             // إنشاء طبقة التلاشي إذا لم تكن موجودة
@@ -999,29 +1038,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.appendChild(overlay);
             }
             
-            // تفعيل التلاشي السلس
+            // تفعيل التلاشي
             setTimeout(() => {
                 overlay.classList.add('active');
             }, 10);
             
-            // الانتقال لصفحة تسجيل الدخول بعد اكتمال التلاشي (0.6 ثانية)
+            // الانتقال الفعلي للصفحة بعد اكتمال التلاشي (0.8 ثانية)
             setTimeout(function() {
                 window.location.href = targetUrl;
-            }, 600);
+            }, 800);
         });
     }
 });
-
-/* ==================== مراقبة وضمان ظهور زر النسخ تلقائياً لرسائل البوت ==================== */
+// مراقبة وضمان ظهور زر النسخ تلقائياً لرسائل البوت عبر MutationObserver الصحيح
 document.addEventListener('DOMContentLoaded', () => {
-    const observer = new MutationsObserver((mutations) => {
+    const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === 1) {
-                    // إذا تمت إضافة صف رسالة بوت أو فقاعة بوت ولا تحتوي على زر نسخ
                     const botRows = node.querySelectorAll ? node.querySelectorAll('.bot-message-row, .message.bot') : [];
                     
-                    // فحص العنصر نفسه أو أبنائه
                     if (node.classList && (node.classList.contains('bot-message-row') || node.classList.contains('message bot'))) {
                         checkAndInjectCopyBtn(node);
                     }
@@ -1037,11 +1073,9 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(document.body, { childList: true, subtree: true });
 
     function checkAndInjectCopyBtn(element) {
-        // تحديد الصف الأب لرسالة البوت
         let row = element.classList.contains('bot-message-row') ? element : element.closest('.bot-message-row');
         
         if (!row) {
-            // إذا كانت فقاعة بوت وليست داخل row، نقوم بإنشاء row احترافي لها
             const msgContent = element.classList.contains('message bot') ? element : element.querySelector('.message.bot');
             if (msgContent) {
                 row = document.createElement('div');
@@ -1075,6 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     let overlay = document.getElementById('offlineOverlay');
     if (!overlay) {
@@ -1091,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let offlineTimer = null;
-    const confirmationDelay = 4000; // فترة السماح (4 ثوانٍ لتجنب التذبذب المؤقت)
+    const confirmationDelay = 4000;
 
     async function checkRealInternet() {
         if (!navigator.onLine) return false;
@@ -1131,14 +1166,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    // استبدل سطر التمرير القديم بهذا السطر:
-setTimeout(() => {
-    chatBox.scrollTop = chatBox.scrollHeight;
-}, 50); // تأخير 50 ملي ثانية يضمن وصول الشريط للقاع 100%
+
+    setTimeout(() => {
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    }, 50);
+
     setInterval(monitorConnection, 5000);
     monitorConnection();
 });
-
 </script>
 </body>
 </html>

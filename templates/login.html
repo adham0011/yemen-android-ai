@@ -192,6 +192,111 @@
             text-align: center;
             display: none;
         }
+        /* ==================== طبقة التلاشي السينمائي ==================== */
+.page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 11, 18, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.page-transition-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+/* ==================== نافذة الخطأ المنبثقة (Modal) ==================== */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(4, 8, 14, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.login-modal-card {
+    background: #0d1522;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 380px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.85),
+                0 0 25px rgba(239, 68, 68, 0.15);
+    transform: scale(0.9) translateY(15px);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-modal-overlay.active .login-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+/* حركة نبض خفيفة لصورة الخطأ */
+@keyframes falsePulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+    50% { transform: scale(1.06); filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8)); }
+}
+
+.false-icon-anim {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    animation: falsePulse 2s infinite ease-in-out;
+}
+
+.login-modal-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    transition: all 0.25s ease;
+    width: 100%;
+    margin-top: 18px;
+}
+
+.login-modal-btn:hover {
+    background: linear-gradient(135deg, #f87171, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+/* ==================== تعديل نوع وتنسيق خط رسالة الخطأ ==================== */
+#modalErrorText {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important; /* نوع خط أنيق وواضح */
+    font-size: 0.92rem !important; /* حجم متناسق ومريح للعين */
+    font-weight: 700 !important; /* جعل الخط عريضاً وبارزاً (Bold) */
+    color: #f87171 !important; /* لون أحمر زاهي وواضح */
+    letter-spacing: 0.3px !important; /* تباعد خفيف بين الحروف لزيادة الوضوح */
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important; /* توهج خفيف يناسب الثيم السيبراني */
+}
     </style>
 </head>
 <body>
@@ -231,16 +336,23 @@
             </button>
         </form>
     </div>
-
+<!-- النافذة المنبثقة لخطأ تسجيل الدخول -->
+<div class="login-modal-overlay" id="loginErrorModal">
+    <div class="login-modal-card">
+        <img src="/static/images/false.png" class="false-icon-anim" alt="خطأ في الدخول">
+        <div style="font-size: 1.15rem; font-weight: bold; color: #fff; margin-bottom: 6px;">تواصل بالمطور للدخول الى لوحة التحكم</div>
+        <div style="font-size: 0.9rem; color: #f87171; line-height: 1.5;" id="modalErrorText">تواصل بالمطور للدخول الى لوحة التحكم</div>
+        <button class="login-modal-btn" onclick="closeLoginErrorModal()">حاول مجدداً</button>
+    </div>
+</div>
     <script>
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const usernameInput = document.getElementById('username').value.trim();
     const passwordInput = document.getElementById('password').value.trim();
-    const errorMsg = document.getElementById('errorMsg');
-    
-    errorMsg.style.display = 'none';
+    const errorModal = document.getElementById('loginErrorModal');
+    const modalErrorText = document.getElementById('modalErrorText');
 
     try {
         const response = await fetch('/login', {
@@ -255,33 +367,102 @@
         const data = await response.json();
 
         if (response.ok && data.status === 'success') {
-            // 🌟 تفعيل تأثير التلاشي فور نجاح تسجيل الدخول
-            let overlay = document.querySelector('.page-transition-overlay');
+            // 🌟 تفعيل تأثير التلاشي السلس قبل الانتقال للوحة التحكم
+            let overlay = document.getElementById('pageTransitionOverlay');
             if (!overlay) {
                 overlay = document.createElement('div');
+                overlay.id = 'pageTransitionOverlay';
                 overlay.className = 'page-transition-overlay';
                 document.body.appendChild(overlay);
             }
-            // إظهار الشاشة السوداء بتدريج ناعم
+            
             setTimeout(() => {
-                overlay.style.opacity = '1';
-                overlay.style.visibility = 'visible';
+                overlay.classList.add('active');
             }, 10);
 
-            // الانتقال لصفحة الـ admin بعد انتهاء التلاشي (0.5 ثانية)
+            // الانتقال لصفحة الـ admin بعد اكتمال تأثير التلاشي (0.8 ثانية)
             setTimeout(() => {
                 window.location.href = data.redirect || '/admin';
-            }, 900);
+            }, 800);
 
         } else {
-            errorMsg.textContent = data.message || 'بيانات الدخول غير صحيحة!';
-            errorMsg.style.display = 'block';
+            // ❌ إظهار النافذة المنبثقة الفخمة مع صورة false.png
+            modalErrorText.textContent = data.message || 'تواصل بالمطور للوصول الى لوحة التحكم';
+            errorModal.classList.add('active');
         }
     } catch (err) {
-        errorMsg.textContent = 'حدث خطأ في الاتصال بالخادم!';
-        errorMsg.style.display = 'block';
+        modalErrorText.textContent = 'حدث خطأ في الاتصال بالخادم!';
+        errorModal.classList.add('active');
     }
 });
-    </script>
+
+// دالة إغلاق نافذة الخطأ عند النقر على زر "حاول مجدداً"
+function closeLoginErrorModal() {
+    document.getElementById('loginErrorModal').classList.remove('active');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const adminBtn = document.querySelector('a[href="/login"]') || document.querySelector('a[href*="login"]');
+    
+    if (adminBtn) {
+        adminBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // منع الانتقال الفوري
+            const targetUrl = this.getAttribute('href');
+            
+            // إنشاء طبقة التلاشي إذا لم تكن موجودة
+            let overlay = document.getElementById('pageTransitionOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'pageTransitionOverlay';
+                overlay.className = 'page-transition-overlay';
+                document.body.appendChild(overlay);
+            }
+            
+            // تفعيل التلاشي
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
+            // الانتقال الفعلي للصفحة بعد اكتمال التلاشي (0.8 ثانية)
+            setTimeout(function() {
+                window.location.href = targetUrl;
+            }, 800);
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. تأثير الظهور عند فتح صفحة الدخول (تلاشي العكس)
+    let overlay = document.getElementById('pageTransitionOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'pageTransitionOverlay';
+        overlay.className = 'page-transition-overlay active';
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => {
+            overlay.classList.remove('active');
+        }, 50);
+    }
+
+    // 2. تفعيل التلاشي عند الضغط على زر العودة أو أي زر يرجع للرئيسية
+    const backBtns = document.querySelectorAll('a[href="/"], a.back-btn, .btn-back, a[href*="index"]');
+    
+    backBtns.backend = backBtns || [];
+    backBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // منع الانتقال الفوري
+            const targetUrl = this.getAttribute('href');
+            
+            if (overlay) {
+                overlay.classList.add('active'); // إظهار الستارة الداكنة بالتلاشي
+            }
+            
+            // الانتقال الفعلي بعد اكتمال التلاشي (0.8 ثانية)
+            setTimeout(function() {
+                window.location.href = targetUrl;
+            }, 800);
+        });
+    });
+});
+</script>
 </body>
 </html>

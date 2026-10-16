@@ -232,7 +232,7 @@ def admin_required(f_or_perm=None):
                     for a in admins:
                         if a.get('username') == username:
                             if a.get('status') == 'suspended':
-                                return jsonify({"status": "error", "message": "هذا الحساب موقوف حالياً!"}), 403
+                                return jsonify({"status": "error", "message": "تم ايقاف هذا الحساب مؤقتاً من قبل مطور الموقع"}), 403
                             perms = a.get('permissions', {})
                             if perms.get(perm, False) or perms.get('is_master', False):
                                 found_perm = True
@@ -362,7 +362,7 @@ def login():
                     
                     if matched:
                         if admin_user.get('status') == 'suspended':
-                            error_msg = "هذا الحساب موقوف حالياً!"
+                            error_msg = "تم ايقاف هذا الحساب من قبل مطور الموقع"
                             return jsonify({"status": "error", "message": error_msg}) if request.is_json else render_template('login.html', error=error_msg)
                         is_valid = True
                         matched_admin_user = admin_user
@@ -868,17 +868,41 @@ def change_admin_credentials():
     if not new_username or not old_password or not new_password:
         return jsonify({"status": "error", "message": "يرجى تعبئة جميع الحقول!"}), 400
 
-    current_creds = load_admin_credentials()
-    stored_hash = current_creds.get('password', '')
-
+    current_session_username = session.get('username')
+    admin_creds = load_admin_credentials()
+    
+    # 1. التحقق وتعديل الحساب الرئيسي في admin_config.json (الافتراضي أو الحالي)
+    stored_hash = admin_creds.get('password', '')
     is_old_valid = check_password_hash(stored_hash, old_password) if stored_hash.startswith(('pbkdf2:', 'scrypt:')) else (stored_hash == old_password)
 
-    if not is_old_valid:
-        return jsonify({"status": "error", "message": "كلمة المرور القديمة غير صحيحة!"}), 400
+    if is_old_valid or not current_session_username:
+        # إذا كانت كلمة المرور القديمة صحيحة، أو حتى لو الجلسة مفقودة وتم إدخال كلمة المرور الصحيحة
+        save_admin_credentials(new_username, new_password)
+        session['username'] = new_username
+        return jsonify({"status": "success", "message": "تم تغيير اسم المستخدم وكلمة المرور بنجاح"})
 
-    save_admin_credentials(new_username, new_password)
-    return jsonify({"status": "success", "message": "تم تغيير اسم المستخدم وكلمة المرور بنجاح وتشفيرها بشكل آمن!"})
+    # 2. محاولة البحث في الآدمن الفرعيين إذا لم يكن الرئيسي
+    admins = load_admins()
+    target_admin = None
+    for a in admins:
+        if a.get('username') == current_session_username:
+            target_admin = a
+            break
 
+    if target_admin:
+        stored_hash = target_admin.get('password', '')
+        is_old_valid = check_password_hash(stored_hash, old_password) if stored_hash.startswith(('pbkdf2:', 'scrypt:')) else (stored_hash == old_password)
+
+        if not is_old_valid:
+            return jsonify({"status": "error", "message": "كلمة المرور القديمة غير صحيحة!"}), 400
+
+        target_admin['username'] = new_username
+        target_admin['password'] = generate_password_hash(new_password)
+        save_admins(admins)
+        session['username'] = new_username
+        return jsonify({"status": "success", "message": "تم تغيير اسم المستخدم وكلمة المرور بنجاح"})
+
+    return jsonify({"status": "error", "message": "كلمة المرور القديمة غير صحيحة!"}), 400
 
 # ==================== 🛠️ مسارات إدارة حسابات الآدمن والصلاحيات الجديدة ====================
 
@@ -951,6 +975,13 @@ def add_admin_account():
         "status": "active",
         "permissions": permissions
     }
+    new_admin = {
+        "username": username,
+        "password": generate_password_hash(password),
+        "plain_password": password, # حفظ كلمة المرور نصياً للعرض فقط
+        "status": "active",
+        "permissions": permissions
+    }
     admins.append(new_admin)
     save_admins(admins)
     return jsonify({"status": "success", "message": "تم إنشاء حساب الآدمن بنجاح!"})
@@ -958,7 +989,7 @@ def add_admin_account():
 @app.route('/api/admin/accounts/<username>', methods=['PUT'])
 @admin_required('is_master')
 def update_admin_account(username):
-    """تعديل حالة الحساب (نشط/موقوف) أو الصلاحيات ومن ضمنها is_master"""
+    """تعديل حالة الحساب (نشط/موقف) أو الصلاحيات ومن ضمنها is_master"""
     data = request.json or {}
     admins = load_admins()
     found = False
@@ -978,8 +1009,52 @@ def update_admin_account(username):
         return jsonify({"status": "error", "message": "الحساب غير موجود"}), 404
 
     save_admins(admins)
+    if 'password' in data and data['password'].strip():
+                raw_pass = data['password'].strip()
+                a['password'] = generate_password_hash(raw_pass)
+                a['plain_password'] = raw_pass # تحديث كلمة المرور النصية
     return jsonify({"status": "success", "message": "تم تحديث حساب الآدمن بنجاح!"})
+@app.route('/api/admin/accounts/<username>/password', methods=['GET'])
+@admin_required('is_master')
+def get_admin_password(username):
+    """جلب كلمة المرور الخاصة بحساب الآدمن لعرضها للمسؤول الرئيسي"""
+    admins = load_admins()
+    for a in admins:
+        if a.get('username') == username:
+            # بما أن كلمة المرور مخزنة كـ Hash، لإظهارها كما طلب المستخدم، 
+            # سنقوم بتعديل طريقة التخزين أو إرجاع رسالة مفادها أن كلمة المرور الحالية مشفرة 
+            # أو يمكننا تخزين كلمة المرور نصياً في ملف الحسابات إذا رغبت بإظهارها مباشرة.
+            plain_pass = a.get('plain_password', 'كلمة المرور مشفرة أو غير متوفرة (قم بتحديثها لتظهر)')
+            return jsonify({"status": "success", "password": plain_pass})
+            
+    return jsonify({"status": "error", "message": "الحساب غير موجود"}), 404
+@app.route('/api/admin/accounts/reset-all', methods=['POST'])
+@admin_required('is_master')
+def reset_admin_accounts():
+    """إعادة ضبط الحسابات وحذف كافة اليوزرات الفرعية واعتماد الحساب الرئيسي فقط"""
+    try:
+        # 1. تحديث الحساب الرئيسي في admin_config.json بالاسم وكلمة المرور المطلوبة
+        master_username = "ايمن بن فارس"
+        master_password = "778590705"
+        save_admin_credentials(master_username, master_password)
 
+        # 2. إعادة ضبط ملف admins.json ليحتوي فقط على الحساب الرئيسي النشط بصلاحيات كاملة
+        default_admins = [{
+            "username": master_username,
+            "password": generate_password_hash(master_password),
+            "plain_password": master_password,
+            "status": "active",
+            "permissions": {"drivers": True, "tools": True, "train": True, "data": True, "is_master": True}
+        }]
+        save_admins(default_admins)
+
+        # 3. تحديث الجلسة الحالية لضمان عدم انقطاع الاتصال
+        session['username'] = master_username
+        session['is_master'] = True
+
+        return jsonify({"status": "success", "message": "تمت إعادة ضبط اليوزرات واعتماد الحساب الرئيسي (ايمن بن فارس) بنجاح!"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 @app.route('/api/admin/accounts/<username>', methods=['DELETE'])
 @admin_required('is_master')
 def delete_admin_account(username):

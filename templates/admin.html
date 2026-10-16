@@ -2,8 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | Taiger Chat AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>لوحة التحكم | Taiger Chat AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,21 +12,36 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
-            background-color: #04080e;
-            background-image: 
-                radial-gradient(at 10% 20%, rgba(34, 197, 94, 0.15) 0px, transparent 40%),
-                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.12) 0px, transparent 40%),
-                radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.1) 0px, transparent 60%);
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
+  body {
+    background-color: #04080e;
+    background-image: 
+        radial-gradient(at 10% 20%, rgba(34, 197, 94, 0.15) 0px, transparent 40%),
+        radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.12) 0px, transparent 40%),
+        radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.1) 0px, transparent 60%);
+    color: #ffffff;
+    min-height: 100vh;
+    min-height: 100dvh; /* لدعم الشاشات الطولية الحديثة للجوال */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* تنسيق خاص بصفحة الأدمن عند الفتح من الجوال لمنع التمدد */
+@media (max-width: 768px) {
+    body {
+        padding: 10px !important;
+    }
+    .admin-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 18px 12px !important;
+        margin: 0 auto !important;
+    }
+}
 
         .bg-glow-1 {
             position: absolute;
@@ -552,7 +566,100 @@
             margin-bottom: 15px;
             animation: donePulse 2s infinite ease-in-out;
         }
-        
+        .page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 11, 18, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.page-transition-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+/* ==================== تنسيق نافذة الخطأ المنبثقة ==================== */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(4, 8, 14, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.login-modal-card {
+    background: #0d1522;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 380px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.85),
+                0 0 25px rgba(239, 68, 68, 0.15);
+    transform: scale(0.9) translateY(15px);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-modal-overlay.active .login-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+@keyframes falsePulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+    50% { transform: scale(1.06); filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8)); }
+}
+
+.false-icon-anim {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    animation: falsePulse 2s infinite ease-in-out;
+}
+
+.login-modal-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    transition: all 0.25s ease;
+    width: 100%;
+    margin-top: 18px;
+}
+
+.login-modal-btn:hover {
+    background: linear-gradient(135deg, #f87171, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
     </style>
 </head>
 <body>
@@ -693,8 +800,42 @@
             </div>
         </div>
     </div>
-    
+    <!-- النافذة المنبثقة المخصصة لخطأ كلمة المرور القديمة -->
+<div class="login-modal-overlay" id="oldPassErrorModal">
+    <div class="login-modal-card">
+        <img src="/static/images/false.png" class="false-icon-anim" alt="خطأ في كلمة المرور">
+        <div style="font-size: 1.15rem; font-weight: bold; color: #fff; margin-bottom: 6px;">عذراً،</div>
+        <div id="oldPassErrorText" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important; font-size: 0.92rem !important; font-weight: 700 !important; color: #f87171 !important; letter-spacing: 0.3px !important; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important; line-height: 1.5;">كلمة المرور القديمة غير صحيحة!</div>
+        <button class="login-modal-btn" onclick="closeOldPassErrorModal()">حاول مجدداً</button>
+    </div>
+</div>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // 1. التلاشي العكسي عند فتح صفحة الـ Admin لأول مرة (لتظهر بتدرج ناعم)
+    let overlay = document.createElement('div');
+    overlay.id = 'pageTransitionOverlay';
+    overlay.className = 'page-transition-overlay active';
+    document.body.appendChild(overlay);
+
+    setTimeout(() => {
+        overlay.classList.remove('active');
+    }, 50);
+
+    // 2. تفعيل التلاشي عند الضغط على زر الخروج (Logout)
+    const logoutBtn = document.querySelector('a[href="/logout"]');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetUrl = this.getAttribute('href');
+            
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 800);
+        });
+    }
+});
     function toggleLayout() {
             const menuList = document.querySelector('.menu-list');
             const icon = document.getElementById('layoutIcon');
@@ -735,7 +876,12 @@ function checkPermission(permKey) {
             return false;
         } function closeModal() {
             document.getElementById('adminModal').classList.remove('active');
-        }
+        // إعادة إظهار الفوتر والأزرار تلقائياً عند أي إغلاق للنافذة
+    const footer = document.querySelector('.modal-footer');
+    if (footer) {
+        footer.style.display = 'flex';
+    }
+}
 
   function showModal(title, bodyHtml, saveCallback, showSaveBtn = true) {
             document.getElementById('modalTitle').innerHTML = title;
@@ -762,6 +908,7 @@ function checkPermission(permKey) {
             }
             document.getElementById('adminModal').classList.add('active');
         }
+        
        function openEditAccountModal(username, permissions, status) {
             if (!checkPermission('is_master')) return;
             const html = `
@@ -1036,7 +1183,7 @@ function checkPermission(permKey) {
                 </button>
 
                 <button onclick="openCategoryView('explanations')" style="display: flex; align-items: center; justify-content: space-between; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #fff; padding: 16px 20px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.98rem; font-weight: bold; width:100%;">
-                    <span><i class="fas fa-chalkboard-user" style="color: #c084fc; margin-left: 10px; font-size: 1.1rem;"></i> عرض الشروحات والسيناريوهات المضافة</span>
+                    <span><i class="fas fa-chalkboard-user" style="color: #c084fc; margin-left: 10px; font-size: 1.1rem;"></i> عرض الشروحات المضافة</span>
                     <i class="fas fa-chevron-left" style="color: #c084fc;"></i>
                 </button>
             `;
@@ -1233,7 +1380,7 @@ function checkPermission(permKey) {
             document.getElementById('newPasswordInput').value = '';
         }
 
-        async function submitChangeCreds() {
+async function submitChangeCreds() {
             const new_username = document.getElementById('newUsernameInput').value.trim();
             const old_password = document.getElementById('oldPasswordInput').value.trim();
             const new_password = document.getElementById('newPasswordInput').value.trim();
@@ -1252,17 +1399,29 @@ function checkPermission(permKey) {
 
                 const data = await res.json().catch(() => ({}));
                 if (res.ok && data.status === 'success') {
-                    showSuccessModal(data.message, () => closeChangeCredsModal());
+                    closeChangeCredsModal();
+                    showSuccessModal(data.message, () => {
+                        window.location.reload();
+                    });
                 } else {
-                    alert(data.message || 'حدث خطأ أثناء حفظ التغييرات');
+                    // إظهار نافذة الخطأ المنبثقة الفخمة بدلاً من alert
+                    const errorModal = document.getElementById('oldPassErrorModal');
+                    const errorText = document.getElementById('oldPassErrorText');
+                    errorText.textContent = data.message || 'كلمة المرور القديمة غير صحيحة!';
+                    errorModal.classList.add('active');
                 }
             } catch (err) {
-                alert('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً.');
+                const errorModal = document.getElementById('oldPassErrorModal');
+                const errorText = document.getElementById('oldPassErrorText');
+                errorText.textContent = 'حدث خطأ في الاتصال بالخادم!';
+                errorModal.classList.add('active');
             }
         }
 
-        /* ==================== إدارة حسابات الآدمن والصلاحيات ==================== */
-        
+        // دالة إغلاق نافذة خطأ كلمة المرور
+        function closeOldPassErrorModal() {
+            document.getElementById('oldPassErrorModal').classList.remove('active');
+        }
 function openMasterVerifyModal() {
             if (!checkPermission('is_master')) return;
             const html = `
@@ -1305,7 +1464,7 @@ function openMasterVerifyModal() {
                 alert('حدث خطأ في الاتصال بالخادم');
             }
         }
-        async function openAdminAccountsDashboard() {
+     async function openAdminAccountsDashboard() {
             if (!checkPermission('is_master')) return;
             showModal('جاري التحميل...', '<div style="text-align:center; padding:20px; color:#aaa;">جاري جلب الحسابات...</div>', null, false);
             try {
@@ -1318,43 +1477,48 @@ function openMasterVerifyModal() {
                 }
                 const accounts = await res.json();
 
+                // عرض كافة الحسابات المرتجعة من السيرفر بشكل كامل ودون استثناء
                 let accountsHtml = accounts.length ? accounts.map((acc, idx) => `
                     <div style="background:#060b12; border:1px solid rgba(255,255,255,0.08); padding:14px 16px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <div style="color:#fff; font-weight:bold; font-size:1.02rem; display:flex; align-items:center; gap:8px;">
                                 <i class="fas fa-user-shield" style="color:#38bdf8;"></i> ${acc.username}
                                 <span style="font-size:0.72rem; padding:2px 8px; border-radius:6px; background:${acc.status === 'active' ? 'rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4)'}">
-                                    ${acc.status === 'active' ? 'نشط' : 'موقوف مؤقتاً'}
+                                    ${acc.status === 'active' ? 'نشط' : 'موقف مؤقتاً'}
                                 </span>
                             </div>
                             <div style="color:#94a3b8; font-size:0.78rem; margin-top:4px;">
                                 الصلاحيات: 
-                                <b style="color:${acc.permissions.is_master ? '#38bdf8' : '#94a3b8'}">${acc.permissions.is_master ? 'رئيسي ✓ | ' : 'رئيسي ✗ | '}</b>
-                                ${acc.permissions.drivers ? 'تعاريف ✓ ' : 'تعاريف ✗ '} | 
-                                ${acc.permissions.tools ? 'أدوات ✓ ' : 'أدوات ✗ '} | 
-                                ${acc.permissions.train ? 'تلقين AI ✓ ' : 'تلقين AI ✗ '} | 
-                                <b style="color:${acc.permissions.data ? '#4ade80' : '#ef4444'}">${acc.permissions.data ? 'إدارة البيانات ✓' : 'إدارة البيانات ✗'}</b>
+                                <b style="color:${acc.permissions && acc.permissions.is_master ? '#38bdf8' : '#94a3b8'}">${acc.permissions && acc.permissions.is_master ? 'رئيسي ✓ | ' : 'رئيسي ✗ | '}</b>
+                                ${acc.permissions && acc.permissions.drivers ? 'تعاريف ✓ ' : 'تعاريف ✗ '} | 
+                                ${acc.permissions && acc.permissions.tools ? 'أدوات ✓ ' : 'أدوات ✗ '} | 
+                                ${acc.permissions && acc.permissions.train ? 'تلقين AI ✓ ' : 'تلقين AI ✗ '} | 
+                                <b style="color:${acc.permissions && acc.permissions.data ? '#4ade80' : '#ef4444'}">${acc.permissions && acc.permissions.data ? 'إدارة البيانات ✓' : 'إدارة البيانات ✗'}</b>
                             </div>
                         </div>
 
-                        <!-- قائمة الثلاث نقاط للخيارات -->
+                        <!-- قائمة الخيارات -->
                         <div style="position:relative;">
                             <button onclick="toggleAccountMenu(event, '${acc.username}')" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; width:36px; height:36px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;">
                                 <i class="fas fa-ellipsis-vertical"></i>
                             </button>
-<div id="menu-${acc.username}" style="display:none; position:fixed; background:#0d1522; border:1px solid rgba(34,197,94,0.4); border-radius:10px; min-width:160px; padding:6px; z-index:99999; box-shadow:0 10px 25px rgba(0,0,0,0.9);">                                <button onclick="openEditAccountModal('${acc.username}', ${JSON.stringify(acc.permissions).replace(/"/g, '&quot;')}, '${acc.status}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#38bdf8; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
+                            <div id="menu-${acc.username}" style="display:none; position:fixed; background:#0d1522; border:1px solid rgba(34,197,94,0.4); border-radius:10px; min-width:160px; padding:6px; z-index:99999; box-shadow:0 10px 25px rgba(0,0,0,0.9);">
+                                <button onclick="openEditAccountModal('${acc.username}', ${JSON.stringify(acc.permissions || {}).replace(/"/g, '&quot;')}, '${acc.status}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#38bdf8; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
                                     <i class="fas fa-pen-to-square"></i> تعديل الصلاحيات والحالة
                                 </button>
+                                <button onclick="showAdminPassword('${acc.username}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#38bdf8; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
+    <i class="fas fa-eye"></i> عرض كلمة المرور
+</button>
                                 <button onclick="toggleSuspendAccount('${acc.username}', '${acc.status}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#fbbf24; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
                                     <i class="fas fa-user-lock"></i> ${acc.status === 'active' ? 'إيقاف مؤقت' : 'تفعيل الحساب'}
                                 </button>
-                                <button onclick="deleteAdminAccount('${acc.username}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#ef4444; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
+                                <button onclick="deleteAdminAccount('${acc.username}')" style="display:flex; align-items:center; gap:8px; width:100%; background:transparent; border:none; color:#ef4444; path:8px; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-align:right;">
                                     <i class="fas fa-trash-can"></i> حذف الحساب
                                 </button>
                             </div>
                         </div>
                     </div>
-                `).join('') : '<div style="text-align:center; padding:20px; color:#aaa;">لا توجد حسابات آدمن فرعية مضافة بعد</div>';
+                `).join('') : '<div style="text-align:center; padding:20px; color:#aaa;">لا توجد حسابات مضافة بعد</div>';
 
                 const wrappedHtml = `
                     <div>
@@ -1362,7 +1526,9 @@ function openMasterVerifyModal() {
                             <button onclick="openAddAccountModal()" style="background:linear-gradient(135deg, #16a34a, #22c55e); color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:0.88rem; display:flex; align-items:center; gap:6px;">
                                 <i class="fas fa-user-plus"></i> إضافة حساب آدمن جديد
                             </button>
-                           
+                            <button onclick="resetAllAdminAccounts()" style="background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; border:none; padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:0.85rem; display:flex; align-items:center; gap:6px; box-shadow: 0 4px 12px rgba(239,68,68,0.3);">
+        <i class="fas fa-rotate-left"></i> إعادة ضبط يوزرات الآدمن
+    </button>
                         </div>
                         <div style="max-height: 380px; overflow-y: auto;">
                             ${accountsHtml}
@@ -1376,7 +1542,6 @@ function openMasterVerifyModal() {
                 alert('فشل في جلب حسابات الآدمن');
             }
         }
-
         function toggleAccountMenu(event, username) {
             event.stopPropagation();
             document.querySelectorAll('[id^="menu-"]').forEach(m => {
@@ -1599,6 +1764,53 @@ document.querySelector('.modal-footer').style.display = 'none';
                 };
             }
         }
+        async function showAdminPassword(username) {
+    if (!checkPermission('is_master')) return;
+    try {
+        const res = await fetch(`/api/admin/accounts/${username}/password`);
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+            const html = `
+                <div style="text-align: center; padding: 15px;">
+                    <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px;">كلمة المرور الخاصة بالحساب (${username}) هي:</div>
+                    <div style="background: #060b12; border: 1px solid rgba(56, 189, 248, 0.4); padding: 12px; border-radius: 10px; color: #4ade80; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px;">
+                        ${data.password}
+                    </div>
+                </div>
+            `;
+            showModal('<i class="fas fa-key" style="color:#38bdf8;"></i> كلمة مرور الحساب', html, null, false);
+        } else {
+            alert(data.message || 'تعذر جلب كلمة المرور');
+        }
+    } catch (err) {
+        alert('حدث خطأ أثناء الاتصال بالخادم');
+    }
+}
+async function resetAllAdminAccounts() {
+    if (!checkPermission('is_master')) return;
+    
+    if (!confirm("⚠️ هل أنت متأكد من رغبتك في إعادة ضبط اليوزرات؟ سيتم حذف جميع الحسابات الفرعية نهائياً واعتماد الحساب الرئيسي (ايمن بن فارس) فقط!")) {
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/admin/accounts/reset-all', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await res.json().catch(() => ({}));
+        
+        if (res.ok && data.status === 'success') {
+            showSuccessModal(data.message, () => {
+                window.location.reload(); // تحديث الصفحة لتطبيق الحساب الرئيسي الجديد
+            });
+        } else {
+            alert(data.message || 'حدث خطأ أثناء إعادة الضبط');
+        }
+    } catch (err) {
+        alert('تعذر الاتصال بالخادم');
+    }
+}
     </script>
 </body>
 </html>

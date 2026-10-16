@@ -459,7 +459,7 @@ body.chat-started #backgroundOverlay {
 .chat-box {
     position: absolute !important;
     top: 95px !important;
-    bottom: 100px !important; /* مسافة ثابتة ودقيقة فوق الشريط العائم مباشرة */
+    bottom: 77px !important; /* مسافة ثابتة ودقيقة فوق الشريط العائم مباشرة */
     left: 0 !important;
     right: 0 !important;
     /* 🌟 تم إزالة خاصية height هنا لإنهاء التضارب وجعل الحاوية تلتصق بالمسافة المحددة تماماً */
@@ -1040,108 +1040,43 @@ footer {
     display: none !important;
 }
 
-/* ==================== التجاوب مع الأجهزة والهواتف ==================== */
 @media (max-width: 768px) {
-    body {
-        background-size: contain !important;
-        background-color: #070b12 !important;
-        background-repeat: no-repeat !important;
-        background-position: center center !important;
-        background-attachment: scroll !important;
+    /* تحويل أزرار الهيدر لمربعات بأيقونات فقط وتخفي النص تماماً */
+    .theme-header-btn.icon-only-mobile {
+        min-width: 38px !important;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+    }
+    
+    .theme-header-btn.icon-only-mobile .btn-text {
+        display: none !important;
     }
 
-    html body .chat-box {
-        padding: 90px 12px 110px 12px !important;
-        height: calc(100vh - 95px);
-        height: calc(100dvh - 95px) !important;
-    }
-
+    /* توازن شريط الإرسال العائم وزر الإرسال وزر + في الجوال */
     .input-area {
-        width: 95% !important;
-        bottom: 12px !important;
-        padding: 8px !important;
+        padding: 6px 8px !important;
         gap: 6px !important;
-        border-radius: 12px !important;
     }
 
     .input-area input {
-        height: 42px !important;
-        padding: 0 12px !important;
-        font-size: 14px !important;
+        height: 40px !important;
+        font-size: 13px !important;
+        padding: 0 10px !important;
     }
 
     #actionBtn {
-        height: 42px !important;
-        padding: 0 14px !important;
-        font-size: 13px !important;
-    }
-
-    .file-preview-container {
-        width: 95% !important;
-        bottom: 72px !important;
-    }
-
-    .message, 
-    .chat-box .message.user, 
-    .chat-box .message.bot {
-        max-width: 92% !important;
-        padding: 12px 16px !important;
-        font-size: 0.92rem !important;
-        border-radius: 14px !important;
-    }
-
-    .app-header {
-        padding: 12px !important;
-        height: 75px !important;
-    }
-
-    .header-left {
-        top: 12px !important;
-        left: 12px !important;
-        gap: 5px !important;
-    }
-
-    .theme-header-btn {
-        min-width: auto !important;
-        height: 36px !important;
-        padding: 0 10px !important;
-        font-size: 12px !important;
-    }
-
-    .chat-brand {
-        top: 10px !important;
-        right: 12px !important;
-        gap: 6px !important;
-    }
-
-    .chat-brand img {
-        width: 38px !important;
-        height: 38px !important;
-    }
-
-    .chat-brand-title {
-        font-size: 16px !important;
-    }
-
-    .chat-brand-subtitle {
-        font-size: 9px !important;
-        letter-spacing: 1px !important;
-    }
-
-    .media-btn {
-        width: 40px !important;
         height: 40px !important;
-        border-radius: 10px !important;
-        font-size: 15px !important;
+        padding: 0 12px !important;
+        font-size: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
-    .mode-select-btn {
-        min-width: auto !important;
-        padding: 8px 10px !important;
-        font-size: 0.8rem !important;
-    }
+
 }
-
 @supports (height: 100dvh) {
     body,
     .app-container,
@@ -1543,4 +1478,620 @@ footer {
 /* شريط الإرسال (أقل من السايدبار ليبقى تحتها عند فتحها) */
 .input-area {
     z-index: 400 !important;
+}
+/* إجبار القائمة المنسدلة على الاختفاء تماماً افتراضياً وعدم الظهور إلا بـ show */
+.plus-dropdown-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    position: absolute !important;
+    bottom: 125% !important;
+    right: 0 !important;
+    background: rgba(10, 18, 28, 0.98) !important;
+    border: 1px solid rgba(52, 211, 153, 0.45) !important;
+    border-radius: 14px !important;
+    min-width: 180px !important;
+    padding: 8px !important;
+    backdrop-filter: blur(16px) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8) !important;
+    z-index: 9999 !important;
+    /* خصائص الانيميشن الافتراضية (قبل الظهور) */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(20px) scale(0.94) !important;
+}
+
+.plus-dropdown-menu.show {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+
+/* إخفاء النصوص في الهيدر للجوال وتحويل الأزرار لمربعات */
+@media (max-width: 768px) {
+    .theme-header-btn.icon-only-mobile {
+        min-width: 38px !important;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+    }
+    
+    .theme-header-btn.icon-only-mobile .btn-text {
+        display: none !important;
+    }
+}
+/* زر + المطور الفاخر والمتوهج */
+.plus-main-btn {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.25)) !important;
+    border: 1px solid rgba(52, 211, 153, 0.8) !important;
+    color: #4ade80 !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 15px rgba(52, 211, 153, 0.35), inset 0 0 8px rgba(52, 211, 153, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    flex-shrink: 0 !important;
+}
+
+.plus-main-btn:hover {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.5), rgba(6, 182, 212, 0.4)) !important;
+    border-color: #65ff32 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) scale(1.06) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 25px rgba(74, 222, 128, 0.6), inset 0 0 12px rgba(74, 222, 128, 0.3) !important;
+}
+
+.plus-main-btn i {
+    transition: transform 0.35s ease !important;
+}
+
+.plus-main-btn:hover i {
+    transform: rotate(90deg) scale(1.15) !important;
+}
+/* تنسيق الأزرار الرئيسية للقوائم داخل زر + */
+.category-toggle-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding: 10px 12px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f8fafc !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.category-toggle-btn:hover {
+    background: rgba(34, 197, 94, 0.15) !important;
+    border-color: rgba(34, 197, 94, 0.4) !important;
+    color: #4ade80 !important;
+}
+
+/* حاوية القوائم الفرعية المنسدلة عند النقر */
+.submenu-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+    padding-right: 6px !important;
+}
+/* إخفاء القوائم الفرعية افتراضياً لمنع ظهورها مع زر + مباشرة */
+.submenu-container {
+    display: none !important;
+}
+
+.submenu-container.show-sub {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+    padding-right: 6px !important;
+}
+/* =========================================================
+   تحديث وتحسين قائمة زر (+) والانيميشن الخاص بالتلاشي (CSS Only)
+   ========================================================= */
+
+/* 1. التلاشي والانيميشن السلس للقائمة الرئيسية عند الضغط على زر (+) */
+.plus-dropdown-menu {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(15px) scale(0.96) !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                visibility 0.35s ease !important;
+    background: linear-gradient(135deg, rgba(8, 15, 26, 0.97), rgba(13, 24, 41, 0.95)) !important;
+    border: 1px solid rgba(52, 211, 153, 0.5) !important;
+    border-radius: 16px !important;
+    padding: 10px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(34, 197, 94, 0.2) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+.plus-dropdown-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* 2. تصميم عصري للأزرار الرئيسية (نوع الرد | إرفاق وسائط) */
+.category-toggle-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding: 12px 14px !important;
+    background: rgba(20, 35, 50, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f8fafc !important;
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.category-toggle-btn:hover {
+    background: rgba(34, 197, 94, 0.15) !important;
+    border-color: rgba(52, 211, 153, 0.6) !important;
+    color: #4ade80 !important;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.25) !important;
+}
+
+/* 3. التلاشي والانيميشن السلس للقوائم الفرعية عند الضغط عليها */
+.submenu-container {
+    opacity: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    transform: translateY(-8px) !important;
+    transition: opacity 0.3s ease, max-height 0.3s ease, transform 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin-top: 0 !important;
+    padding-right: 4px !important;
+}
+
+.submenu-container.show-sub {
+    opacity: 1 !important;
+    max-height: 250px !important; /* ارتفاع كافي لاحتواء الخيارات */
+    transform: translateY(0) !important;
+    margin-top: 6px !important;
+}
+
+/* 4. تصميم عصري وراقي للأزرار الداخلية (إجابة سريعة، صور، فيديو...) */
+.plus-dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px 14px !important;
+    background: rgba(10, 18, 28, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: #cbd5e1 !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    text-align: right !important;
+    transition: all 0.2s ease !important;
+}
+
+.plus-dropdown-item:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(56, 189, 248, 0.2)) !important;
+    border-color: rgba(52, 211, 153, 0.6) !important;
+    color: #ffffff !important;
+    transform: translateX(-4px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* تمييز الخيار النشط (Active Mode) */
+.plus-dropdown-item.active-mode {
+    background: rgba(34, 197, 94, 0.25) !important;
+    border-color: #4ade80 !important;
+    color: #4ade80 !important;
+}
+/* استعادة ثيم الخلفية المخصص للهواتف والشاشات الصغيرة */
+@media (max-width: 768px) {
+    body {
+        background: #070b12 url("/static/images/tiger-theme-mobile.png") center center / 100% 100% no-repeat fixed !important;
+    }
+}/* =========================================================
+   إصلاح جذري لشريط الإرسال داخل إطار الجوال والشاشات الصغيرة
+   ========================================================= */
+@media (max-width: 768px) {
+    .input-area {
+        position: fixed !important;
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 15px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* حقل النص يتقلص ويمتلئ بالوسط بلطف */
+    .input-area input#userInput {
+        height: 42px !important;
+        font-size: 13px !important;
+        padding: 0 12px !important;
+        min-width: 0 !important; /* لضمان عدم تمدده بشكل يزيح الأزرار */
+    }
+
+    /* زر الإرسال بمقاسات متناسقة داخل الإطار */
+    #actionBtn {
+        height: 42px !important;
+        padding: 0 12px !important;
+        font-size: 13px !important;
+        border-radius: 10px !important;
+        white-space: nowrap !important;
+    }
+
+    /* زر الزائد (+) بمقاس مناسب للجوال */
+    .plus-main-btn {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
+        font-size: 15px !important;
+    }
+}
+/* توحيد مقاسات الأزرار الثلاثة العلوية بالكامل */
+@media (max-width: 768px) {
+    .app-header .theme-header-btn.square-icon-btn {
+        min-width: 38px !important;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+/* توسيط هندسي مطلق للأيقونات داخل الأزرار المربعة العلوية */
+.theme-header-btn.square-icon-btn,
+.theme-header-btn.icon-only-mobile {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+/* إخفاء أي عنصر نصي فارغ قد يسبب إزاحة */
+.theme-header-btn .btn-text {
+    display: none !important;
+}
+
+/* تثبيت الأيقونة في المنتصف تماماً طولاً وعرضاً */
+.theme-header-btn.square-icon-btn i,
+.theme-header-btn.icon-only-mobile i {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+/* ==================== تصحيح وتجاوب شعار تايجر للهواتف والشاشات الصغيرة ==================== */
+
+/* الحجم الأصلي للشاشات الكبيرة والكمبيوتر */
+.chat-brand {
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+    transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s ease;
+    z-index: 600;
+    direction: ltr;
+}
+
+.chat-brand img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(80, 255, 40, 0.55)) drop-shadow(0 0 18px rgba(80, 255, 40, 0.25));
+}
+
+.chat-brand-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.chat-brand-title {
+    font-size: 25px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #ffffff, #75ff45, #ffffff, #54dfff);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: tigerTitleGlow 4s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(80, 255, 40, 0.45));
+}
+
+.chat-brand-subtitle {
+    margin-top: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #70ff48;
+    text-shadow: 0 0 5px rgba(80, 255, 40, 0.5);
+}
+
+/* التكيف التلقائي للشاشات المتوسطة والهواتف (Max-width: 768px) */
+@media (max-width: 768px) {
+    .chat-brand {
+        right: 15px !important;
+        top: 20px !important;
+        gap: 8px !important;
+        max-width: calc(100% - 150px) !important; /* تقييد العرض لمنع التداخل مع أزرار اليسار */
+    }
+
+    .chat-brand img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .chat-brand-title {
+        font-size: 15px !important;
+    }
+
+    .chat-brand-subtitle {
+        font-size: 8px !important;
+        letter-spacing: 1px !important;
+    }
+}
+
+/* الشاشات الضيقة جداً والهواتف الصغيرة (Max-width: 420px) */
+@media (max-width: 420px) {
+    .chat-brand {
+        right: 10px !important;
+        gap: 6px !important;
+        max-width: calc(100% - 135px) !important;
+    }
+
+    .chat-brand img {
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+    .chat-brand-title {
+        font-size: 13px !important;
+    }
+
+    .chat-brand-subtitle {
+        font-size: 7px !important;
+        letter-spacing: 0.5px !important;
+    }
+}
+/* ==================== ضبط وتحديد حجم الصور المرفقة في المحادثة ==================== */
+.chat-attached-img {
+    display: block !important;
+    max-width: 100% !important;
+    max-height: 220px !important; /* تحديد أقصى ارتفاع لئلا تتمدد بشكل مبالغ فيه */
+    width: auto !important;
+    height: auto !important;
+    border-radius: 12px !important;
+    object-fit: contain !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    border: 1px solid rgba(52, 211, 153, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* تنسيق حاوية الملفات المرفقة داخل رسالة المستخدم لضمان التناسق */
+.attached-files-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 6px !important;
+    max-width: 100% !important;
+}
+
+/* ==================== تنسيق أزرار التواصل المجاورة والمربعة (نسخة صحيحة ومصححة) ==================== */
+.sidebar-footer-credits {
+    margin-top: auto;
+    padding: 12px 10px 10px 10px;
+    text-align: center;
+    border-top: 1px solid rgba(52, 211, 153, 0.25);
+    background: rgba(5, 11, 20, 0.6);
+    border-radius: 14px;
+}
+
+.sidebar-footer-credits span {
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    letter-spacing: 0.2px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* حاوية الأزرار متجاورة ومتوسطة */
+.developer-contact-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
+
+/* التنسيق الأساسي للأزرار المربعة المضيئة */
+.dev-contact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* إضافة تأثير لمعان خفيف يتحرك داخل الزر */
+.dev-contact-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(0deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: rotate(45deg) translateY(-100%);
+    transition: transform 0.5s ease;
+}
+
+.dev-contact-btn:hover::after {
+    transform: rotate(45deg) translateY(100%);
+}
+
+/* 1. زر الاتصال المباشر (توهج سماوي نيون مع أنيميشن نبض خفيف) */
+.dev-call-btn {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(56, 189, 248, 0.7);
+    color: #38bdf8;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 12px rgba(56, 189, 248, 0.3);
+    animation: callPulse 3s infinite ease-in-out;
+}
+
+.dev-call-btn:hover {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.5), rgba(14, 165, 233, 0.7));
+    border-color: #38bdf8;
+    color: #ffffff;
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6), 0 0 22px rgba(56, 189, 248, 0.7);
+}
+
+/* 2. زر الواتساب (توهج أخضر نيون فخم مع أنيميشن نبض خفيف) */
+.dev-wa-btn {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(74, 222, 128, 0.7);
+    color: #4ade80;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 12px rgba(34, 197, 94, 0.3);
+    animation: waPulse 3s infinite ease-in-out;
+}
+
+.dev-wa-btn:hover {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.5), rgba(34, 197, 94, 0.7));
+    border-color: #65ff32;
+    color: #ffffff;
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6), 0 0 22px rgba(74, 222, 128, 0.7);
+}
+
+.dev-contact-btn:active {
+    transform: scale(0.92);
+}
+
+/* حركات النبض التلقائية للأيقونات لجذب الانتباه */
+@keyframes callPulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(56, 189, 248, 0.3); }
+    50% { box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 18px rgba(56, 189, 248, 0.6); }
+}
+
+@keyframes waPulse {
+    0%, 100% { box-shadow: 0 41px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(34, 197, 94, 0.3); }
+    50% { box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 18px rgba(34, 197, 94, 0.6); }
+}
+/* ==================== إصلاح ظهور أيقونات التواصل بدقة ==================== */
+.dev-contact-btn i {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+}
+
+/* إجبار أداة الواتساب على إظهار الخط الصحيح للعلامات */
+.dev-wa-btn i.fa-whatsapp {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+    color: #4ade80 !important;
+}
+
+.dev-call-btn i.fa-phone {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    color: #38bdf8 !important;
+}
+/* ==================== تنسيق زر إنستجرام فقط ==================== */
+.dev-insta-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 12px !important;
+    font-size: 1.15rem !important;
+    text-decoration: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(16px) !important;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(15, 23, 42, 0.9)) !important;
+    border: 1px solid rgba(244, 114, 182, 0.7) !important;
+    color: #f472b6 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(236, 72, 153, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.dev-insta-btn:hover {
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.5), rgba(217, 70, 239, 0.7)) !important;
+    transform: translateY(-2px) scale(1.06) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 18px rgba(236, 72, 153, 0.7) !important;
+    color: #fff !important;
+}
+
+.dev-insta-btn:active {
+    transform: scale(0.92) !important;
+}
+
+.dev-insta-btn i.fa-instagram {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    line-height: 1 !important;
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+}
+/* ==================== تأثير التلاشي السينمائي السلس بين الصفحات ==================== */
+.page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 11, 18, 0.95); /* خلفية داكنة متناسقة مع ثيم التطبيق */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.page-transition-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
